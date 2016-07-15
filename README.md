@@ -1,7 +1,7 @@
 # DownloadYouLike
 爬虫工具<br>
 使用前请先执行<br>
-npm install request
+npm install request<br>
 npm install cheerio<br>
 npm install superagent<br>
 npm install eventproxy<br>
