@@ -15,6 +15,15 @@ var EventProxy = require('eventproxy');
 
 var paths = require('path');
 
+
+
+
+
+
+
+
+
+return;
 // superagent.get(taotaoUrl)
 //     .end(function (err, res) {
 //

@@ -160,7 +160,7 @@ var getData = {
     'getUrl':function(durl){
         console.log('当前时间:', new Date());
 
-        request.get(durl,{timeout: config[c].timeout},function(error, response, body){
+        request.get(durl,{timeout: config[c].urlTimeout},function(error, response, body){
             if (!error && response.statusCode == 200) {
                 console.log('响应');
                 var $ = cheerio.load(body);
@@ -181,7 +181,9 @@ var getData = {
 
                 });
                 // console.log('3响应');
-                ep.emit('all', '完成');//临时
+                // ep.emit('all', '完成');//临时
+                // var options = tool.checkHeader(durl,config[c]);
+
 
                 getData.getImages(durl);
                 getData.go();
@@ -217,19 +219,15 @@ var getData = {
                 var title;
                 var res = tool.checkImagesKeyWordUrl(durl,config[c].imagesKeyWordUrl);
                 if (res) {
-                    $(config[c].FolderNameElement).each(function (idx, element) {
-                        if (element.children) {
-                            title = tool.checkFolName(element.children[0].data);
-                        } else {
-                            title = '未命名';
-                        }
-                        // console.log(element.children[0].data);
-                    });
 
+                 title= tool.checkFolderNameElement($,config[c].FolderNameElement,config[c].FolderNamRegExp);
+                   //过滤title中的不需要内容
 
-                    tool.checkFolder(config[c].imagesSavePath + title);
+                    tool.checkFolder(config[c].imagesSavePath + title);//创建不存在的文件夹
+                    var imgs = tool.handleImgElement($,config[c].imagesInfoElement,config[c].imagesAttr);
+                    //所有获取到的图片属性src却不重复
 
-                    var imgs = $(config[c].imagesInfoElement).toArray();
+                    // var imgs = $(config[c].imagesInfoElement[0]).toArray();
                     // console.log(imgs);
                     var len = imgs.length;
                     // console.log('需要下载'+len+'张图片');
@@ -246,9 +244,9 @@ var getData = {
                     var i = 0;
                     var s = 0;
                     for (i; i < len; i++) {
-                  if(typeof imgs[i].attribs.src=='string') {
+                  if(imgs[i]) {
                       try{
-                          var href = url.resolve(durl, imgs[i].attribs.src);
+                          var href = url.resolve(durl, imgs[i]);
                       }catch (e){
                           console.log(e);
                           continue;

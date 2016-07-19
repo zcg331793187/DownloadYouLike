@@ -52,8 +52,8 @@ var configs = require('./configs').configs;
 
         }
     },
-    'checkFolName':function(str){
-        return str.replace(/\s/g,'');
+    'checkRegExp':function(str,exp){
+        return str.replace(exp,'');
     },
     'localFileSize':function (href,downImageSize,callback){
         fs.stat(href,function (err, stats) {
@@ -82,11 +82,6 @@ var configs = require('./configs').configs;
                 break;
             }
         }
-
-
-
-
-
     return re;
     }
     ,'checkImagesKeyWordUrl':function(urlString,configs){
@@ -127,6 +122,65 @@ var configs = require('./configs').configs;
 
 
          });//先删除已经存在的文件
+     },
+     'checkFolderNameElement':function(obj,ele,RegExp){
+         var i = 0;
+         var j = 0;
+         var temp;
+         for (i in ele){
+             // obj(ele[i]).html();
+             temp = obj(ele[i]).text();
+             if(temp){
+
+                 for( j in RegExp){
+
+                     temp = tool.checkRegExp(temp,RegExp[j]);
+
+                 }
+             }
+             if(temp){
+                 console.log(temp);
+                 break;
+             }
+
+
+         }
+         if(!temp){
+             temp = '未定义';
+         }
+
+
+        return temp;
+     },
+     'checkHeader':function(url,header){
+
+
+
+     },
+     'handleImgElement':function(obj,ele,attr){
+         var tmp = [];
+         var i = 0;
+         var j = 0;
+         var k = 0;
+         for (i in ele){
+             obj((ele[i])).each(function(id,eles){
+                    for (j in attr){
+                        if(obj(eles).attr(attr[j])){
+
+                            if(tmp.indexOf(obj(eles).attr(attr[j]))==-1){
+                                tmp.push(obj(eles).attr(attr[j]));
+                            }
+
+                        }
+                    }
+
+                 // return;
+         });
+         }
+
+         console.log(tmp);
+
+         return tmp;
      }
 
 
