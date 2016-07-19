@@ -11,6 +11,7 @@ var cheerio = require('cheerio');
 var config = require('./configs').configs;
 var downLoadImg = require('./downLoadImg').download;
 var tool = require('./tool').tool;
+// var iconv = require('iconv-lite');
 
 
 var c = 0;

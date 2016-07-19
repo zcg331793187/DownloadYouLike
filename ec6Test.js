@@ -5,4 +5,5 @@
 var fs = require('fs');
 
 
-fs.mkdirSync('.././uploads/','0777');
+// fs.mkdirSync('.././uploads/','0777');
+
