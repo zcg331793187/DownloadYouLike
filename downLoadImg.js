@@ -12,12 +12,15 @@ var tool = require('./tool').tool;
 var  download = {
     'errorCount':0,
     'counts':0,
-    'saveImg':function (href,savePath,callback) {
+    'saveImg':function (option,savePath,callback) {
         if(fs.existsSync(savePath)==false) {
             var startTime;
             var endTime;
             startTime = new Date().getTime();
-            request.get(href).on('error',function(error)
+
+
+            request(option,function(error,response,body){
+            }).on('error',function(error)
             {
                 console.log(error);
 
@@ -34,7 +37,7 @@ var  download = {
         }else{
             var res = tool.checkResetDownloadImage;
             if(res){
-                download.checkImageSize(href,savePath,callback);
+                download.checkImageSize(option,savePath,callback);
             }
             // callback('文件已存在');
             // console.log('文件已存在');
@@ -42,7 +45,7 @@ var  download = {
 
 
     },'checkImageSize':function (href,savePath,callback){
-        request.head(href, function(err, res, body){
+        request(href, function(err, res, body){
             if(!err && res.statusCode==200){
                 // console.log('content-type:', res.headers['content-type']);  //这里返回图片的类型
                 var downImageSize = res.headers['content-length'];

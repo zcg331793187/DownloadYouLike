@@ -23,17 +23,27 @@ var configs = require('./configs').configs;
         // console.log(config);
         for( i in config.notLikeKeyWord){
 
-            if(urlString.indexOf(config.notLikeKeyWord[i])>-1 || urlAllArray.indexOf(urlString)>-1){
-                re = false;
-                break;
-            }
-        }
-        if(re){
-            for( j in config.likeKeyWord){
-                if(urlString.indexOf(config.likeKeyWord[j])==-1){
+            try{
+                if(urlString.indexOf(config.notLikeKeyWord[i])>-1 || urlAllArray.indexOf(urlString)>-1){
                     re = false;
                     break;
                 }
+            }catch (e){
+                console.log('checkUlr'+e);
+            }
+
+        }
+        if(re){
+            for( j in config.likeKeyWord){
+                try{
+                    if(urlString.indexOf(config.likeKeyWord[j])==-1){
+                        re = false;
+                        break;
+                    }
+                }catch (e){
+                    console.log('checkUlr'+e);
+                }
+
 
             }
 
@@ -75,6 +85,8 @@ var configs = require('./configs').configs;
 },'checkImageUrl':function(urlString,configs){
         var re = true;
         var iu=0;
+
+
         for( iu in configs){
 
             if(urlString.indexOf(configs[iu])>-1){
@@ -157,11 +169,14 @@ var configs = require('./configs').configs;
 
 
      },
-     'handleImgElement':function(obj,ele,attr){
+     'handleImgElement':function(obj,ele,attr,NotDownload){
          var tmp = [];
          var i = 0;
          var j = 0;
          var k = 0;
+         var tmps = [];
+         var tmpsStauts=true;
+         var status;
          for (i in ele){
              obj((ele[i])).each(function(id,eles){
                     for (j in attr){
@@ -177,12 +192,31 @@ var configs = require('./configs').configs;
                  // return;
          });
          }
+         // console.log(tmp);
 
-         console.log(tmp);
+         // console.log('-------------------');
+         for (var r in tmp){
 
-         return tmp;
+
+             for(var t in NotDownload){
+
+                 if(tmp[r].indexOf(NotDownload[t])>-1){
+                     tmpsStauts = false;
+                     break;
+                 }
+
+
+
+             }
+             if(tmpsStauts){
+                 tmps.push(tmp[r]);
+             }
+             tmpsStauts =true;
+
+         }
+
+         return tmps;
      }
-
 
 };
 
