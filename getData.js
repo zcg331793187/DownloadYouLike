@@ -72,7 +72,7 @@ var getData = {
                     this.getUrl(config[c].webRoot);
                 }else{
                     console.log('下一个配置不存在,返回执行当前配置');
-                    c--;
+                    c=0;
                     this.getUrl(config[c].webRoot);
                 }
 
@@ -166,6 +166,12 @@ var getData = {
             if (!error && response.statusCode == 200) {
                 // console.log('相应');
                 // ep.emit('got_url', null);
+                // var imgs = getData.imagesUrl(option,body,config);
+                //
+                // console.log(imgs);
+                // console.log('imagesUrl');
+                // return;
+
                 if(config[c].iSgb2312==true){
                     body = Iconv.decode(body, 'gb2312');
                 }
@@ -178,7 +184,9 @@ var getData = {
                    //过滤title中的不需要内容
 
                     tool.checkFolder(config[c].imagesSavePath + title);//创建不存在的文件夹
+                    console.log(config[c].imagesSavePath + title);
                     var imgs = tool.handleImgElement($,config[c].imagesInfoElement,config[c].imagesAttr,config[c].imagesNotDownload);
+                    // var imgs = getData.imagesUrl(body,config[c]);
                     //所有获取到的图片属性src却不重复
                     console.log(imgs);
 
@@ -218,7 +226,7 @@ var getData = {
                                 // console.log(opntion);
                                 downLoadImg.saveImg(opntion, savePath, function (message) {
                                     // ep.emit('got_next_url', message);
-                                    console.log('已下载%s张图片', s);
+                                    // console.log('已下载%s张图片', s);
                                     // ep.emit('got_url', message);
                                 });
                             }
@@ -246,6 +254,28 @@ var getData = {
         });
 
 
+    },
+    'imagesUrl':function (option,body,config) {
+        if(config[c].iSgb2312==true){
+            body = Iconv.decode(body, 'gb2312');
+        }
+        var $ = cheerio.load(body);
+        var title;
+        var res = tool.checkImagesKeyWordUrl(option.url,config[c].imagesKeyWordUrl);
+        if (res) {
+            title= tool.checkFolderNameElement($,config[c].FolderNameElement,config[c].FolderNamRegExp);
+            //过滤title中的不需要内容
+            tool.checkFolder(config[c].imagesSavePath + title);//创建不存在的文件夹
+            console.log(config[c].imagesSavePath + title);
+            var imgs = tool.handleImgElement($,config[c].imagesInfoElement,config[c].imagesAttr,config[c].imagesNotDownload);
+
+
+        }
+        if(!imgs){
+            imgs = [];
+        }
+
+        return imgs;
     }
 };
 

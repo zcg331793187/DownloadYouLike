@@ -1,22 +1,51 @@
 /**
  * Created by zhoucaiguang on 16/7/11.
  */
-var express = require('express');
-var request= require('request');
-var fs = require('fs');
-var url = require('url'); //解析操作url
-var superagent = require('superagent'); //这三个外部依赖不要忘记npm install
-var cheerio = require('cheerio');
-var eventproxy = require('eventproxy');
-var async = require("async");
-var targetUrl = 'http://www.xiumm.cc/';
-var chuUrl = 'http://www.chuu.co.kr/product/detail.html?product_no=16082&cate_no=1&display_group=3';
-var EventProxy = require('eventproxy');
+// var express = require('express');
+// var request= require('request');
+// var fs = require('fs');
+// var url = require('url'); //解析操作url
+// var superagent = require('superagent'); //这三个外部依赖不要忘记npm install
+// var cheerio = require('cheerio');
+// var eventproxy = require('eventproxy');
+// var async = require("async");
+// var targetUrl = 'http://www.xiumm.cc/';
+// var chuUrl = 'http://www.chuu.co.kr/product/detail.html?product_no=16082&cate_no=1&display_group=3';
+// var EventProxy = require('eventproxy');
+//
+// var paths = require('path');
 
-var paths = require('path');
+
+
+var sss = [ 'http://xdm.1985t.com/templets/xdm/images/grey.gif',
+    'http://xdm.1985t.com/uploads/allimg/141015/2-141015152203.jpg',
+    'http://xdm.1985t.com/uploads/allimg/141015/2-141015152204.gif',
+    'http://xdm.1985t.com/uploads/allimg/141015/2-141015152206.jpg',
+    'http://xdm.1985t.com/uploads/allimg/141015/2-141015152207.jpg',
+    'http://xdm.1985t.com/uploads/allimg/141015/2-141015152208.gif',
+    'http://xdm.1985t.com/uploads/allimg/141015/2-141015152208-50.jpg',
+    'http://xdm.1985t.com/uploads/allimg/141015/2-141015152209.jpg' ];
+
+var f = ['gif'];
+for (var r in sss)
+{
+    for(var e in f){
+        if(sss[r].indexOf(f[e])>-1){
+            sss.splice(r,1);
+        }
+    }
 
 
 
+}
+
+
+console.log(sss);
+
+
+
+
+return;
 
 
 
