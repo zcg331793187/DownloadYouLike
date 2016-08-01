@@ -8,9 +8,24 @@
 //     database:"nodejs",
 //     port:"3306",
 //     maxSockets : 10,//pool使用
-//     timeout : 1//pool使用
+//     timeout : 我问问1//pool使用
 // };
 'use strict';
+exports.mail={
+    service:'Gmail',
+    auth:{
+        user: 'zhoucaiguang@gmail.com',
+        pass: '147258369QAZZXC'
+    },
+    from: 'zhoucaiguang@gmail.com',
+    to: '331793187@qq.com', // list of receivers
+    time:'M',//y,m,d,h,M,s  //图片文件夹间隔
+    afterTime:'s',//y,q,m,w,d,h,M,s
+    afterType:'-',
+    after:30,
+    schedule:"*/1 * * * *"
+};
+
 exports.configs=[{
     webRoot:'http://www.xiumm.cc',
     isSort:true,//是否对url进行排序
@@ -28,15 +43,15 @@ exports.configs=[{
     timeout:4000,//请求超时
     urlTimeout:4000,//请求超时
     imgTimeout:5000,//请求超时
-    imagesSavePath:'.././网站图片/uploads-xiumm/',//相对路径
+    imagesSavePath:'./uploads/xiumm/',//相对路径
     isResetDownImage:false,
     urlElement:['a'],
     urlAttr:['href'],
     urlSearchType: {
         likeKeyWord:['.html','photo'],
         notLikeKeyWord:['#','javascript']},
-    autoNext : true,//是否请求完所有url后执行下一个配置项
-    autoLoop : true,//遍历所有url后重新webRoot请求
+    autoNext : false,//是否请求完所有url后执行下一个配置项
+    autoLoop : false,//遍历所有url后重新webRoot请求
 },{
     webRoot:'http://www.4493.com',
     isSort:true,//是否对url进行排序

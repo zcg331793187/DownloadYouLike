@@ -7,6 +7,8 @@ var getData = require('./getData').getData;
 
 
 
-
 getData.init();
+
+
+
 // console.log(getData);

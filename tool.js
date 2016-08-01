@@ -9,7 +9,7 @@ var request= require('request');
 var cheerio = require('cheerio');
 var path = require('path');
 var downLoadImg = require('./downLoadImg').download;
-var c = require('./getData').c;
+var getData = require('./getData').getData;
 var configs = require('./configs').configs;
 
 
@@ -116,12 +116,12 @@ var configs = require('./configs').configs;
          }
      },
      'checkResetDownloadImage':function () {
-         if(config[c].isResetDownImage==undefined){
+         if(config[getData.c].isResetDownImage==undefined){
              throw '未定义是否重新下载图片资源';
          }
 
 
-         return config[c].isResetDownImage;
+         return config[getData.c].isResetDownImage;
      },
      'deleteFile':function(savePath,callback){
          fs.unlink(savePath,function (err) {
@@ -216,6 +216,136 @@ var configs = require('./configs').configs;
          }
 
          return tmps;
+     },
+     'checkDate':function(interval){
+        var date = new Date();
+         var dates;
+         switch (interval)
+         {
+             case 'y':
+                 dates = new Date(date.getFullYear());
+                 break;
+             case 'm':
+                 dates = new Date(date.getFullYear(),date.getMonth());
+                 break;
+             case 'd':
+                 dates = new Date(date.getFullYear(),date.getMonth(),date.getDay());
+                 break;
+             case 'h':
+                 dates = new Date(date.getFullYear(),date.getMonth(),date.getDay(),date.getHours());
+                 break;
+             case 'M':
+                 dates = new Date(date.getFullYear(),date.getMonth(),date.getDay(),date.getHours(),date.getMinutes());
+                 break;
+             case 's':
+                 dates = new Date(date.getFullYear(),date.getMonth(),date.getDay(),date.getHours(),date.getMinutes(),date.getSeconds());
+                 break;
+             default:
+                 dates = new Date(date.getFullYear(),date.getMonth(),date.getDay());
+                 break;
+
+         }
+         return dates;
+},
+     'formDate':function(date){
+         var tmp = Date.parse( date ).toString();
+         tmp = tmp.substr(0,10);
+         return tmp;
+     },
+     'DateAddORSub':function (dates,interval,type,number) {
+         /*
+          * 功能:实现Script的Date加减功能.
+          * 参数:interval,字符串表达式，表示要添加的时间间隔.
+          * 参数:number,数值表达式，表示要添加的时间间隔的个数.
+          * 参数:type,加减类型.
+          * 返回:新的时间对象.
+          * var newDate =DateAddORSub("d","+",5);
+          */
+         var date = dates;
+         switch(interval)
+         {
+             case "y" : {
+                 if(type=="+"){
+                     date.setFullYear(date.getFullYear()+number);
+                 }else{
+                     date.setFullYear(date.getFullYear()-number);
+                 }
+                 return date;
+                 break;
+             }
+             case "q" : {
+                 if(type=="+"){
+                     date.setMonth(date.getMonth()+number*3);
+                 }else{
+                     date.setMonth(date.getMonth()-number*3);
+                 }
+                 return date;
+                 break;
+             }
+             case "m" : {
+                 if(type=="+"){
+                     date.setMonth(date.getMonth()+number);
+                 }else{
+                     date.setMonth(date.getMonth()-number);
+                 }
+                 return date;
+                 break;
+             }
+             case "w" : {
+                 if(type=="+"){
+                     date.setDate(date.getDate()+number*7);
+                 }else{
+                     date.setDate(date.getDate()-number*7);
+                 }
+                 return date;
+                 break;
+             }
+             case "d" : {
+                 if(type=="+"){
+                     date.setDate(date.getDate()+number);
+                 }else{
+                     date.setDate(date.getDate()-number);
+                 }
+                 return date;
+                 break;
+             }
+             case "h" : {
+                 if(type=="+"){
+                     date.setHours(date.getHours()+number);
+                 }else{
+                     date.setHours(date.getHours()-number);
+                 }
+                 return date;
+                 break;
+             }
+             case "M" : {
+                 if(type=="+"){
+                     date.setMinutes(date.getMinutes()+number);
+                 }else{
+                     date.setMinutes(date.getMinutes()-number);
+                 }
+                 return date;
+                 break;
+             }
+             case "s" : {
+                 if(type=="+"){
+                     date.setSeconds(date.getSeconds()+number);
+                 }else{
+                     date.setSeconds(date.getSeconds()-number);
+                 }
+                 return date;
+                 break;
+             }
+             default : {
+                 if(type=="+"){
+                     date.setDate(d.getDate()+number);
+                 }else{
+                     date.setDate(d.getDate()-number);
+                 }
+                 return date;
+                 break;
+             }
+         }
      }
 
 };

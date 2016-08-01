@@ -12,12 +12,11 @@ var config = require('./configs').configs;
 var downLoadImg = require('./downLoadImg').download;
 var tool = require('./tool').tool;
 var Iconv = require('iconv-lite');
-
 var c = 0;
 var ep = new EventProxy();
-
-
-
+var sendMail = require('./action/sendMailFoMy').sendMail;
+var schedule = require('./action/schedule').schedule;
+var mail = require('./configs').mail;
 
 
 
@@ -31,16 +30,23 @@ var ep = new EventProxy();
 var getData = {
     'init':function(){
 
-        this.getUrl(config[c].webRoot);
+        // this.getUrl(config[c].webRoot);
+        schedule.start(mail.schedule);
+
     },
+    'dd':function () {
+        getData.c++;
+        console.log(this.c);
+    },
+    'c':0,
     'urlAllArray':[],
     'urlNowArray':[],
     'urlErrorArray':[],
     'eqCount':0,
     'count':0,
     'go':function(){
-        if(config[c].isSort){
-            tool.sortType(getData.urlNowArray,config[c].sortType);
+        if(config[getData.c].isSort){
+            tool.sortType(getData.urlNowArray,config[getData.c].sortType);
             // getData.urlNowArray.sort();
         }
         var nowUrl = getData.urlNowArray.shift();
@@ -60,20 +66,20 @@ var getData = {
             getData.count = 0;
             getData.eqCount = 0;
             console.log('列队内剩余'+getData.urlNowArray.length);
-            if(config[c].autoLoop){
-                this.getUrl(config[c].webRoot);
+            if(config[getData.c].autoLoop){
+                this.getUrl(config[getData.c].webRoot);
                 return;
             }
 
 
-            if(config[c].autoNext){
-                c++;
-                if(config[c]){
-                    this.getUrl(config[c].webRoot);
+            if(config[getData.c].autoNext){
+                getData.c++;
+                if(config[getData.c]){
+                    this.getUrl(config[getData.c].webRoot);
                 }else{
                     console.log('下一个配置不存在,返回执行当前配置');
-                    c=0;
-                    this.getUrl(config[c].webRoot);
+                    getData.c=0;
+                    this.getUrl(config[getData.c].webRoot);
                 }
 
             }
@@ -89,16 +95,16 @@ var getData = {
 
         var option = {
             url:durl,
-        timeout: config[c].urlTimeout
+        timeout: config[getData.c].urlTimeout
         };
-        if(config[c].iSgb2312==true){
+        if(config[getData.c].iSgb2312==true){
             option.encoding = null
         }
         request(option,function(error, response, body){
             if (!error && response.statusCode == 200) {
                 console.log('响应');
 
-                if(config[c].iSgb2312==true){
+                if(config[getData.c].iSgb2312==true){
                     body = Iconv.decode(body, 'gb2312');
                 }
 
@@ -114,7 +120,7 @@ var getData = {
                     }
                     // console.log(href);
                     if(href){
-                        var res = tool.checkUrl(href,config[c].urlSearchType,getData.urlAllArray);
+                        var res = tool.checkUrl(href,config[getData.c].urlSearchType,getData.urlAllArray);
                         if(res){//过滤不满足条件的url
                             getData.urlAllArray.push(href);
                             getData.urlNowArray.push(href);
@@ -128,9 +134,9 @@ var getData = {
                 // var options = tool.checkHeader(durl,config[c]);
                 var options = {
                     url:option.url,
-                    timeout:config[c].timeout
+                    timeout:config[getData.c].timeout
                 };
-                if(config[c].iSgb2312==true){
+                if(config[getData.c].iSgb2312==true){
                     options.encoding = null
                 }
 
@@ -172,20 +178,23 @@ var getData = {
                 // console.log('imagesUrl');
                 // return;
 
-                if(config[c].iSgb2312==true){
+                if(config[getData.c].iSgb2312==true){
                     body = Iconv.decode(body, 'gb2312');
                 }
                 var $ = cheerio.load(body);
                 var title;
-                var res = tool.checkImagesKeyWordUrl(option.url,config[c].imagesKeyWordUrl);
+                var res = tool.checkImagesKeyWordUrl(option.url,config[getData.c].imagesKeyWordUrl);
                 if (res) {
-
-                 title= tool.checkFolderNameElement($,config[c].FolderNameElement,config[c].FolderNamRegExp);
+                    // var date = new Date();
+                    // var datePath = tool.formDate(new Date(date.getFullYear(),date.getMonth(),date.getDay(),date.getHours()));
+                    var datePath = tool.formDate(tool.checkDate(mail.time));
+                    title= tool.checkFolderNameElement($,config[getData.c].FolderNameElement,config[getData.c].FolderNamRegExp);
                    //过滤title中的不需要内容
-
-                    tool.checkFolder(config[c].imagesSavePath + title);//创建不存在的文件夹
-                    console.log(config[c].imagesSavePath + title);
-                    var imgs = tool.handleImgElement($,config[c].imagesInfoElement,config[c].imagesAttr,config[c].imagesNotDownload);
+                    tool.checkFolder(config[getData.c].imagesSavePath + datePath);
+                    title = datePath+'/'+title;
+                    tool.checkFolder(config[getData.c].imagesSavePath + title);//创建不存在的文件夹
+                    console.log(config[getData.c].imagesSavePath + title);
+                    var imgs = tool.handleImgElement($,config[getData.c].imagesInfoElement,config[getData.c].imagesAttr,config[getData.c].imagesNotDownload);
                     // var imgs = getData.imagesUrl(body,config[c]);
                     //所有获取到的图片属性src却不重复
                     console.log(imgs);
@@ -212,16 +221,16 @@ var getData = {
                             }
                             // console.log(href);
                             var imagesName = path.basename(href);
-                            var savePath = config[c].imagesSavePath + title + '/' + imagesName;
+                            var savePath = config[getData.c].imagesSavePath + title + '/' + imagesName;
                             if (imagesName != undefined) {
 
                                 // console.log(href);
                                 var opntion = {
                                     url:href,
-                                    timeOut:config[c].imgTimeout
+                                    timeOut:config[getData.c].imgTimeout
                                 };
-                                if(config[c].headers.Referer!=''){
-                                    opntion.headers =config[c].headers;
+                                if(config[getData.c].headers.Referer!=''){
+                                    opntion.headers =config[getData.c].headers;
                                 }
                                 // console.log(opntion);
                                 downLoadImg.saveImg(opntion, savePath, function (message) {
@@ -256,18 +265,18 @@ var getData = {
 
     },
     'imagesUrl':function (option,body,config) {
-        if(config[c].iSgb2312==true){
+        if(config[getData.c].iSgb2312==true){
             body = Iconv.decode(body, 'gb2312');
         }
         var $ = cheerio.load(body);
         var title;
-        var res = tool.checkImagesKeyWordUrl(option.url,config[c].imagesKeyWordUrl);
+        var res = tool.checkImagesKeyWordUrl(option.url,config[getData.c].imagesKeyWordUrl);
         if (res) {
-            title= tool.checkFolderNameElement($,config[c].FolderNameElement,config[c].FolderNamRegExp);
+            title= tool.checkFolderNameElement($,config[getData.c].FolderNameElement,config[getData.c].FolderNamRegExp);
             //过滤title中的不需要内容
-            tool.checkFolder(config[c].imagesSavePath + title);//创建不存在的文件夹
-            console.log(config[c].imagesSavePath + title);
-            var imgs = tool.handleImgElement($,config[c].imagesInfoElement,config[c].imagesAttr,config[c].imagesNotDownload);
+            tool.checkFolder(config[getData.c].imagesSavePath + title);//创建不存在的文件夹
+            console.log(config[getData.c].imagesSavePath + title);
+            var imgs = tool.handleImgElement($,config[getData.c].imagesInfoElement,config[getData.c].imagesAttr,config[getData.c].imagesNotDownload);
 
 
         }
