@@ -14,11 +14,11 @@
 exports.mail={
     service:'Gmail',
     auth:{
-        user: 'zhoucaiguang@gmail.com',
+        user: '***@gmail.com',
         pass: '147258369QAZZXC'
     },
-    from: 'zhoucaiguang@gmail.com',
-    to: '331793187@qq.com', // list of receivers
+    from: '****@gmail.com',
+    to: '***@qq.com', // list of receivers
     time:'M',//y,m,d,h,M,s  //图片文件夹间隔
     afterTime:'s',//y,q,m,w,d,h,M,s
     afterType:'-',
