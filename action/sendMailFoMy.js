@@ -52,7 +52,7 @@ var sendMailer = {
 exports.Mailserver = sendMailer;
 
 
-
+/*
 sendMailer.send(
     {subject:"邮件",
         text:"我是文本",
@@ -65,7 +65,7 @@ sendMailer.send(
         console.log('发送成功----------------');
         // compressionData.deleteZip('../zip/',"uploads.zip");
     });
-
+*/
 
 /*
 var mailOptions = {

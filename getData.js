@@ -29,9 +29,10 @@ var mail = require('./configs').mail;
 
 var getData = {
     'init':function(){
-
-        // this.getUrl(config[c].webRoot);
+        // console.log(__dirname);
+        this.getUrl(config[c].webRoot);
         schedule.start(mail.schedule);
+        // schedule.startEmail(mail.scheduleMail);
 
     },
     'dd':function () {
@@ -100,7 +101,9 @@ var getData = {
         if(config[getData.c].iSgb2312==true){
             option.encoding = null
         }
+        console.log(option);
         request(option,function(error, response, body){
+            console.log('响应');
             if (!error && response.statusCode == 200) {
                 console.log('响应');
 

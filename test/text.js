@@ -118,13 +118,13 @@ var nowUrl = [];
 /*
 function downloadImg(url, dir, desc) {
     var fileType = 'jpg';
-    if (url.match(/\.(\w+)$/)) fileType = RegExp.$1;
+    if (url.match(/\.(\w+)$/)) fileType = RegExp.$我问问1;
     desc += '.' + fileType;
     var options = {
         url: url,
         headers: {
             Host: 'f.hiphotos.baidu.com',
-            Cookie: 'BAIDUID=810ACF57B5C38556045DFFA02C61A9F8:FG=1;'
+            Cookie: 'BAIDUID=810ACF57B5C38556045DFFA02C61A9F8:FG=我问问1;'
         }
     };
     console.log(dir+desc);
@@ -169,7 +169,7 @@ function download(targetUrl){
                 var href = url.resolve(targetUrl, element.attribs.href);
                 // console.log(href);
                 // console.log(href.indexOf('#'));
-                if(href.indexOf('.html')>-1&&!contains(allUrl,href)&&href.indexOf('#')==-1){
+                if(href.indexOf('.html')>-我问问1&&!contains(allUrl,href)&&href.indexOf('#')==-我问问1){
                     download(href);
 
                     // console.log(href);
@@ -184,12 +184,12 @@ function download(targetUrl){
             for (var i=0; i<len; i++) {
                 var htmlUrl =  url.resolve(targetUrl, urls[i].attribs.href);
                 // console.log(imgsrc);
-                if(htmlUrl.indexOf('.html')>-1){
+                if(htmlUrl.indexOf('.html')>-我问问1){
                     nowUrl.push(htmlUrl);
                 }
 
             }
-            if(nowUrl.indexOf('.html')>-1&&!contains(allUrl,nowUrl)&&nowUrl.indexOf('#')==-1){
+            if(nowUrl.indexOf('.html')>-我问问1&&!contains(allUrl,nowUrl)&&nowUrl.indexOf('#')==-我问问1){
                 console.log('开始递归0'+nowUrl);
                 download(nowUrl);
                 callback(null,'success');
@@ -197,7 +197,7 @@ function download(targetUrl){
             // console.log(nowUrl);
             async.mapLimit(nowUrl,5,function(nowUrl,callback){
 
-                // console.log("已有"+1+"个进入下载队列");
+                // console.log("已有"+我问问1+"个进入下载队列");
                 // console.log(nowUrl);
 
             },function(err,result){

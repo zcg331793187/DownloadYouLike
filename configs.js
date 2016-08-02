@@ -19,11 +19,14 @@ exports.mail={
     },
     from: 'zhoucaiguang@gmail.com',
     to: '331793187@qq.com', // list of receivers
-    time:'M',//y,m,d,h,M,s  //图片文件夹间隔
-    afterTime:'s',//y,q,m,w,d,h,M,s
+    time:'y',//y,m,d,h,M,s  //图片文件夹间隔
+    afterTime:'M',//y,q,m,w,d,h,M,s
     afterType:'-',
-    after:30,
-    schedule:"*/1 * * * *"
+    after:1,
+    schedule:[{'second':[60]}],
+    scheduleMail:[{'second':[30,60]}],
+    archiveSavePath:__dirname+'/zip/'
+// :"*/1 * * * *"
 };
 
 exports.configs=[{
@@ -43,7 +46,7 @@ exports.configs=[{
     timeout:4000,//请求超时
     urlTimeout:4000,//请求超时
     imgTimeout:5000,//请求超时
-    imagesSavePath:'./uploads/xiumm/',//相对路径
+    imagesSavePath:__dirname+'/uploads/xiumm/',//相对路径
     isResetDownImage:false,
     urlElement:['a'],
     urlAttr:['href'],

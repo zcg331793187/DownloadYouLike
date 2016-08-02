@@ -20,31 +20,104 @@ var compression = {
     dirList:function(path){
         var s;
         var list=[];
+        var fileSize=0;
         var paths = fs.readdirSync(path);
-
+        // console.log(paths);
+        fs.unlinkSync(curPath);
         var time = tool.formDate(tool.DateAddORSub(tool.checkDate(mail.time),mail.afterTime,mail.afterType,mail.after));
         for( s in paths ){
+            if(paths[s]!=='.DS_Store'){
+                console.log(paths[s]);
+                console.log('------');
+                console.log(time);
             if(paths[s]<time){
-                list.push(paths[s]);
+                // console.log('可使用'+path+paths[s]);
+                // console.log(paths[s]);
+
+               var rootFile =  fs.readdirSync(path+paths[s]);
+
+                    for (var e=0 in rootFile){
+                        if(rootFile[e]!='.DS_Store'){
+                        var size = fs.statSync(path+paths[s]+'/'+rootFile[e]);
+                        console.log('当前:'+size.size);
+                        console.log('总:'+fileSize);
+                        fileSize+=size.size;
+                        if(fileSize<6500){
+                            console.log(rootFile[e]);
+                            console.log(fileSize);
+                            // console.log(path+paths[s]+'/'+rootFile[e]);
+                            list.push(path+paths[s]+'/'+rootFile[e]);
+                        }
+                        }
+                    }
+                // console.log(sfs);
+            }
             }
         }
        return list;
     },  
-    start:function(path,fileName,callback){
+    start:function(path,fileName,savePath){
         var archive = archiver('zip');
 
 
-        var file = this.dirList('./'+path);
+        var file = this.dirList(path);
+        console.log(file);
         if(file.length==0){
             return;
         }
+        console.log('开始压缩');
+        var JSZip = require('jszip');
+        var zip = new JSZip();
 
+        file.forEach(function(file){
+            var images = fs.readdirSync(file+'/');
+            images.forEach(function(imamge){
+
+                var foldsName =  tool.checkRegExp(file,/^\/[\s\S]+\//g);
+                // console.log(imamge);
+
+                zip.folder("images/"+foldsName).file(imamge, fs.readFileSync(file+'/'+imamge));
+            });
+            // console.log(file);
+
+
+
+        });
+        var data = zip.generate({base64:false,compression:'DEFLATE'});
+        fs.writeFile(savePath+fileName, data, 'binary', function(){
+            console.log('success');
+            compression.delete(file);
+            compression.mailServer(fileName);
+        });
+
+
+        return;
+
+        // var imgs = fs.readdirSync("uploads/xiumm/1470122520");
+        // console.log(imgs);
+        // imgs.forEach(function(file){
+        //     console.log("uploads/xiumm/1470122520"+file);
+        //     var ee = fs.readdirSync("uploads/xiumm/1470122520/"+file);
+        //     ee.forEach(function(files){
+        //         console.log(files);
+        //         zip.folder("images/"+file).file(files, fs.readFileSync("uploads/xiumm/1470122520/"+file+'/'+files));
+        //
+        //     })
+        // });
+
+        // var data = zip.generate({base64:false,compression:'DEFLATE'});
+        // fs.writeFile('demo.zip', data, 'binary', function(){
+        //     console.log('success');
+        // });
+
+
+/*
         var output = fs.createWriteStream('./zip/'+fileName);//压缩的名称
         archive.pipe(output);
         file.forEach(function(file,index){
-            console.log(path+'/'+file);
+            console.log(file);
             archive.bulk([
-                { src: [path+'/'+file+'/**']} //读取的文件夹名称
+                { src: [file+'/**']} //读取的文件夹名称
 
             ]);
 
@@ -52,23 +125,23 @@ var compression = {
 
         archive.finalize();
         archive.on('end',function(){
-            compression.delete(path,file);
+            compression.delete(file);
             // console.log(MailAction);
             compression.mailServer(fileName);
             console.log(fileName);
 
         });
-
+*/
 
     },
-    'delete':function(path,fileArray){
-        var s;
-
-        for (s in fileArray){
-            child = exec('rm -rf '+path+'/'+fileArray[s],function(err,out) {
+    'delete':function(path){
+        path.forEach(function(file){
+            console.log('删除:'+file);
+            child = exec('rm -rf '+file,function(err,out) {
                 console.log(out); err && console.log(err);
             });
-        }
+        });
+
 
 
     },
@@ -76,7 +149,8 @@ var compression = {
         child = exec('rm -rf '+path+fileName,function(err,out) {
             console.log(out); err && console.log(err);
         });
-    },
+    }
+    ,
     'mailServer':function(fileName){
         var mailService = require('../action/sendMailFoMy').Mailserver;
 
@@ -98,145 +172,7 @@ var compression = {
 
 exports.compression = compression;
 
-// compression.start('.'+configs[getData.c].imagesSavePath,'sad.zip');
-// compression.dirList('../uploads/xiumm');
-// c++;
-// compression.start('.'+configs[getData.c].imagesSavePath,'sad.zip');
-
-
-// return;
-//压缩文件->发送邮件->删除本地文件->等待下一次循环
-// var date = new Date();
-// var path = date.getFullYear()+'年'+date.getMonth()+'月'+date.getDate()+'日'+date.getHours()+'时';
-// compression.start('../img/'+path,path+'.zip');
 
 
 
 
-
-
-
-/*
- child = exec('rm -rf '+p+'/'+file,function(err,out) {
- console.log(out); err && console.log(err);
- });
- */
-/*
-
-
-function DateAddORSub(dates,interval,type,number)
-{
-    /*
-     * 功能:实现Script的Date加减功能.
-     * 参数:interval,字符串表达式，表示要添加的时间间隔.
-     * 参数:number,数值表达式，表示要添加的时间间隔的个数.
-     * 参数:type,加减类型.
-     * 返回:新的时间对象.
-     * var newDate =DateAddORSub("d","+",5);
-     */
-/*
-    var date = dates;
-    switch(interval)
-    {
-        case "y" : {
-            if(type=="+"){
-                date.setFullYear(date.getFullYear()+number);
-            }else{
-                date.setFullYear(date.getFullYear()-number);
-            }
-            return date;
-            break;
-        }
-        case "q" : {
-            if(type=="+"){
-                date.setMonth(date.getMonth()+number*3);
-            }else{
-                date.setMonth(date.getMonth()-number*3);
-            }
-            return date;
-            break;
-        }
-        case "m" : {
-            if(type=="+"){
-                date.setMonth(date.getMonth()+number);
-            }else{
-                date.setMonth(date.getMonth()-number);
-            }
-            return date;
-            break;
-        }
-        case "w" : {
-            if(type=="+"){
-                date.setDate(date.getDate()+number*7);
-            }else{
-                date.setDate(date.getDate()-number*7);
-            }
-            return date;
-            break;
-        }
-        case "d" : {
-            if(type=="+"){
-                date.setDate(date.getDate()+number);
-            }else{
-                date.setDate(date.getDate()-number);
-            }
-            return date;
-            break;
-        }
-        case "h" : {
-            if(type=="+"){
-                date.setHours(date.getHours()+number);
-            }else{
-                date.setHours(date.getHours()-number);
-            }
-            return date;
-            break;
-        }
-        case "m" : {
-            if(type=="+"){
-                date.setMinutes(date.getMinutes()+number);
-            }else{
-                date.setMinutes(date.getMinutes()-number);
-            }
-            return date;
-            break;
-        }
-        case "s" : {
-            if(type=="+"){
-                date.setSeconds(date.getSeconds()+number);
-            }else{
-                date.setSeconds(date.getSeconds()-number);
-            }
-            return date;
-            break;
-        }
-        default : {
-            if(type=="+"){
-                date.setDate(d.getDate()+number);
-            }else{
-                date.setDate(d.getDate()-number);
-            }
-            return date;
-            break;
-        }
-    }
-}
-
-var timestamp =Math.round(new Date(2015,4,28,2,0,0).getTime()/1000);
-function timest(data) {
-    var tmp = Date.parse( data ).toString();
-    console.log(tmp);
-    tmp = tmp.substr(0,10);
-    return tmp;
-}
-console.log(timestamp);
-console.log(new Date(timestamp*1000));
-//当前时间加五天.
-var newDate = DateAddORSub(new Date(timestamp*1000),"h","-",1);
-console.log(Math.round(newDate.getTime()/1000));
-
-
-
-
-
-*/
