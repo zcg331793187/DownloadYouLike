@@ -69,7 +69,7 @@ var scheduler ={
             // console.log(getData);
             console.log(path);
             console.log("指定定时任务发送邮件");
-            compressionData.start(configs[getData.c].imagesSavePath,path+'.zip');
+            // compressionData.start(configs[getData.c].imagesSavePath,path+'.zip');
 
         });
 

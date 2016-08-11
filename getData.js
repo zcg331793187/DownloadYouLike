@@ -17,8 +17,7 @@ var ep = new EventProxy();
 var sendMail = require('./action/sendMailFoMy').sendMail;
 var schedule = require('./action/schedule').schedule;
 var mail = require('./configs').mail;
-
-
+var mysql = require('./base/mysql');
 
 
 
@@ -31,7 +30,7 @@ var getData = {
     'init':function(){
         // console.log(__dirname);
         this.getUrl(config[c].webRoot);
-        schedule.start(mail.schedule);
+        // schedule.start(mail.schedule);
         // schedule.startEmail(mail.scheduleMail);
 
     },
@@ -101,11 +100,11 @@ var getData = {
         if(config[getData.c].iSgb2312==true){
             option.encoding = null
         }
-        console.log(option);
+        // console.log(option);
         request(option,function(error, response, body){
-            console.log('响应');
+            // console.log('响应');
             if (!error && response.statusCode == 200) {
-                console.log('响应');
+                // console.log('响应');
 
                 if(config[getData.c].iSgb2312==true){
                     body = Iconv.decode(body, 'gb2312');
@@ -193,14 +192,14 @@ var getData = {
                     var datePath = tool.formDate(tool.checkDate(mail.time));
                     title= tool.checkFolderNameElement($,config[getData.c].FolderNameElement,config[getData.c].FolderNamRegExp);
                    //过滤title中的不需要内容
-                    tool.checkFolder(config[getData.c].imagesSavePath + datePath);
-                    title = datePath+'/'+title;
+                   //  tool.checkFolder(config[getData.c].imagesSavePath + datePath);
+                   //  title = datePath+'/'+title;
                     tool.checkFolder(config[getData.c].imagesSavePath + title);//创建不存在的文件夹
-                    console.log(config[getData.c].imagesSavePath + title);
+                    // console.log(config[getData.c].imagesSavePath + title);
                     var imgs = tool.handleImgElement($,config[getData.c].imagesInfoElement,config[getData.c].imagesAttr,config[getData.c].imagesNotDownload);
                     // var imgs = getData.imagesUrl(body,config[c]);
                     //所有获取到的图片属性src却不重复
-                    console.log(imgs);
+                    // console.log(imgs);
 
                     // console.log(imgs);
                     var len = imgs.length;
@@ -222,25 +221,34 @@ var getData = {
                             }else{
                                 href  = imgs[i];
                             }
+
+
                             // console.log(href);
                             var imagesName = path.basename(href);
                             var savePath = config[getData.c].imagesSavePath + title + '/' + imagesName;
                             if (imagesName != undefined) {
+                                var spath = title + '/' + imagesName;
+
 
                                 // console.log(href);
                                 var opntion = {
                                     url:href,
-                                    timeOut:config[getData.c].imgTimeout
+                                    timeOut:config[getData.c].imgTimeout,
+                                    path:spath,
+                                    title:title
                                 };
                                 if(config[getData.c].headers.Referer!=''){
                                     opntion.headers =config[getData.c].headers;
                                 }
                                 // console.log(opntion);
+
+
                                 downLoadImg.saveImg(opntion, savePath, function (message) {
                                     // ep.emit('got_next_url', message);
                                     // console.log('已下载%s张图片', s);
                                     // ep.emit('got_url', message);
                                 });
+
                             }
 
 

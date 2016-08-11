@@ -12,7 +12,7 @@ var mail = require('../configs').mail;
 var tool = require('../tool').tool;
 var configs = require('../configs').configs;
 var getData = require('../getData').getData;
-
+var JSZip = require('jszip');
 
 
 
@@ -23,13 +23,11 @@ var compression = {
         var fileSize=0;
         var paths = fs.readdirSync(path);
         // console.log(paths);
-        fs.unlinkSync(curPath);
+        // fs.unlinkSync(curPath);
         var time = tool.formDate(tool.DateAddORSub(tool.checkDate(mail.time),mail.afterTime,mail.afterType,mail.after));
         for( s in paths ){
             if(paths[s]!=='.DS_Store'){
-                console.log(paths[s]);
-                console.log('------');
-                console.log(time);
+
             if(paths[s]<time){
                 // console.log('可使用'+path+paths[s]);
                 // console.log(paths[s]);
@@ -39,12 +37,9 @@ var compression = {
                     for (var e=0 in rootFile){
                         if(rootFile[e]!='.DS_Store'){
                         var size = fs.statSync(path+paths[s]+'/'+rootFile[e]);
-                        console.log('当前:'+size.size);
-                        console.log('总:'+fileSize);
+
                         fileSize+=size.size;
-                        if(fileSize<6500){
-                            console.log(rootFile[e]);
-                            console.log(fileSize);
+                        if(fileSize<6000){
                             // console.log(path+paths[s]+'/'+rootFile[e]);
                             list.push(path+paths[s]+'/'+rootFile[e]);
                         }
@@ -61,12 +56,11 @@ var compression = {
 
 
         var file = this.dirList(path);
-        console.log(file);
         if(file.length==0){
             return;
         }
         console.log('开始压缩');
-        var JSZip = require('jszip');
+
         var zip = new JSZip();
 
         file.forEach(function(file){
@@ -74,8 +68,8 @@ var compression = {
             images.forEach(function(imamge){
 
                 var foldsName =  tool.checkRegExp(file,/^\/[\s\S]+\//g);
-                // console.log(imamge);
-
+                console.log(imamge);
+                console.log(foldsName);
                 zip.folder("images/"+foldsName).file(imamge, fs.readFileSync(file+'/'+imamge));
             });
             // console.log(file);
@@ -91,47 +85,7 @@ var compression = {
         });
 
 
-        return;
 
-        // var imgs = fs.readdirSync("uploads/xiumm/1470122520");
-        // console.log(imgs);
-        // imgs.forEach(function(file){
-        //     console.log("uploads/xiumm/1470122520"+file);
-        //     var ee = fs.readdirSync("uploads/xiumm/1470122520/"+file);
-        //     ee.forEach(function(files){
-        //         console.log(files);
-        //         zip.folder("images/"+file).file(files, fs.readFileSync("uploads/xiumm/1470122520/"+file+'/'+files));
-        //
-        //     })
-        // });
-
-        // var data = zip.generate({base64:false,compression:'DEFLATE'});
-        // fs.writeFile('demo.zip', data, 'binary', function(){
-        //     console.log('success');
-        // });
-
-
-/*
-        var output = fs.createWriteStream('./zip/'+fileName);//压缩的名称
-        archive.pipe(output);
-        file.forEach(function(file,index){
-            console.log(file);
-            archive.bulk([
-                { src: [file+'/**']} //读取的文件夹名称
-
-            ]);
-
-        });
-
-        archive.finalize();
-        archive.on('end',function(){
-            compression.delete(file);
-            // console.log(MailAction);
-            compression.mailServer(fileName);
-            console.log(fileName);
-
-        });
-*/
 
     },
     'delete':function(path){

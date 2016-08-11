@@ -8,11 +8,26 @@ var url = require('url'); //解析操作url
 var cheerio = require('cheerio');
 var fs = require('fs');
 var tool = require('./tool').tool;
+var mysql = require('./base/mysql');
+
 
 var  download = {
     'errorCount':0,
     'counts':0,
     'saveImg':function (option,savePath,callback) {
+        var spath = option.path;
+        var href = option.url;
+        var title = option.title;
+        // console.log(option);
+        mysql.query('select id from node_img where path=? limit 1',[spath],function (res) {
+
+            if(!res[0]){
+                mysql.insert('node_img',{path:spath,title:title,url:href},function(res){
+                    console.log('save done %s',href);
+                });
+            }
+        });
+        return;
         if(fs.existsSync(savePath)==false) {
             var startTime;
             var endTime;

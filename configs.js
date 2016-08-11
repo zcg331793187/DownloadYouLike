@@ -23,9 +23,19 @@ exports.mail={
     afterTime:'s',//y,q,m,w,d,h,M,s
     afterType:'-',
     after:30,
-    schedule:"*/1 * * * *"
+    schedule:"*/1 * * * *",
+    archiveSavePath:__dirname+'/zip/',
 };
 
+exports.mysqlConfig={
+    server:'localhost',
+    user:"root",
+    password:"zhoucaiguang",
+    database:"NodeJs",
+    port:"3306",
+    maxSockets : 10,//pool使用
+    timeout : 1//pool使用
+};
 exports.configs=[{
     webRoot:'http://www.xiumm.cc',
     isSort:true,//是否对url进行排序
@@ -43,15 +53,15 @@ exports.configs=[{
     timeout:4000,//请求超时
     urlTimeout:4000,//请求超时
     imgTimeout:5000,//请求超时
-    imagesSavePath:'./uploads/xiumm/',//相对路径
-    isResetDownImage:false,
+    imagesSavePath:__dirname+'/uploads/xiumm/',//相对路径
+    isResetDownImage:true,
     urlElement:['a'],
     urlAttr:['href'],
     urlSearchType: {
-        likeKeyWord:['.html','photo'],
+        likeKeyWord:['.html'],
         notLikeKeyWord:['#','javascript']},
     autoNext : false,//是否请求完所有url后执行下一个配置项
-    autoLoop : false,//遍历所有url后重新webRoot请求
+    autoLoop : true,//遍历所有url后重新webRoot请求
 },{
     webRoot:'http://www.4493.com',
     isSort:true,//是否对url进行排序
