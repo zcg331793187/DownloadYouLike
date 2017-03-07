@@ -12,7 +12,9 @@
     "path": "^0.12.7",
     "url": "^0.11.0",
     "archiver-zip": "^0.1.0",
-    "mysql": "^2.11.1"
+    "mysql": "^2.11.1",
+    "pm2": "^1.1.3",
+    "q": "^1.4.1"
   },
   "devDependencies": {
     "archiver": "^1.0.1",

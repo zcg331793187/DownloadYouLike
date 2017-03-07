@@ -8,9 +8,9 @@
 var exec = require('child_process').exec,child;
 var fs = require('fs');
 var archiver = require('archiver');
-var mail = require('../configs').mail;
+var mail = require('../old-configs').mail;
 var tool = require('../tool').tool;
-var configs = require('../configs').configs;
+var configs = require('../old-configs').configs;
 var getData = require('../getData').getData;
 var JSZip = require('jszip');
 
@@ -34,7 +34,7 @@ var compression = {
 
                var rootFile =  fs.readdirSync(path+paths[s]);
 
-                    for (var e=0 in rootFile){
+                    for (var e in rootFile){
                         if(rootFile[e]!='.DS_Store'){
                         var size = fs.statSync(path+paths[s]+'/'+rootFile[e]);
 

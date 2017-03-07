@@ -2,7 +2,7 @@
  * Created by work on 2016/3/21.
  */
 //var mysql = require("mysql");
-var config = require("./../configs").mysqlConfig;
+var config = require("./../old-configs").mysqlConfig;
 
 var util = require('util');
 var pool;

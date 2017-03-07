@@ -4,7 +4,7 @@
 "use strict";
 
 var nodemailer = require('nodemailer');
-var mailConfig = require('../configs').mail;
+var mailConfig = require('../old-configs').mail;
 var compressionData = require('../action/compressionData').compression;
 
 

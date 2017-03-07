@@ -5,8 +5,8 @@
 var schedule = require("node-schedule");
 var compressionData = require('../action/compressionData').compression;
 var getData = require('../getData');
-var configs = require('../configs').configs;
-var mail = require('../configs').mail;
+var configs = require('../old-configs').configs;
+var mail = require('../old-configs').mail;
 
 
 

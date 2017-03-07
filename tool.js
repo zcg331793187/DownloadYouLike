@@ -10,7 +10,7 @@ var cheerio = require('cheerio');
 var path = require('path');
 var downLoadImg = require('./downLoadImg').download;
 var getData = require('./getData').getData;
-var configs = require('./configs').configs;
+var configs = require('./old-configs').configs;
 
 
 
