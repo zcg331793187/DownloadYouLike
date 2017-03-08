@@ -3,7 +3,7 @@
  */
 
 
-var mysql = require('./base/mysql');
+var mysql = require('./../base/mysql');
 "use strict";
 
 var title = '美女0';

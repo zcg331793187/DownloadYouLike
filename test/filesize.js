@@ -5,7 +5,7 @@
 "use strict";
 
 var fs = require('fs');
-var compressionData = require('./action/compressionData').compression;
+var compressionData = require('./../action/compressionData').compression;
 
 // console.log(path);
 var zipSize=0;
