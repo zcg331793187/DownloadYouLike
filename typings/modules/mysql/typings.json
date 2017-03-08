@@ -1,0 +1,8 @@
+{
+  "resolution": "main",
+  "tree": {
+    "src": "https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/90dd89f0a43856d2808f898a9228fdaa237f1e76/mysql/index.d.ts",
+    "raw": "registry:dt/mysql#0.0.0+20170113202751",
+    "typings": "https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/90dd89f0a43856d2808f898a9228fdaa237f1e76/mysql/index.d.ts"
+  }
+}

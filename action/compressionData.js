@@ -8,10 +8,10 @@
 var exec = require('child_process').exec,child;
 var fs = require('fs');
 var archiver = require('archiver');
-var mail = require('../old-configs').mail;
-var tool = require('../tool').tool;
-var configs = require('../old-configs').configs;
-var getData = require('../getData').getData;
+var mail = require('../js/old-configs').mail;
+var tool = require('../js/tool').tool;
+var configs = require('../js/old-configs').configs;
+var getData = require('../js/getData').getData;
 var JSZip = require('jszip');
 
 

@@ -4,9 +4,9 @@
 "use strict";
 var schedule = require("node-schedule");
 var compressionData = require('../action/compressionData').compression;
-var getData = require('../getData');
-var configs = require('../old-configs').configs;
-var mail = require('../old-configs').mail;
+var getData = require('../js/getData');
+var configs = require('../js/old-configs').configs;
+var mail = require('../js/old-configs').mail;
 
 
 

@@ -8,17 +8,16 @@ var express = require('express');
 var request= require('request');
 var url = require('url'); //解析操作url
 var cheerio = require('cheerio');
-var config = require('./configs').configs;
+var config = require('./old-configs').configs;
 var downLoadImg = require('./downLoadImg').download;
-// var tool = require('./tool').tool;
 var tool = require('./tool').tool;
 var Iconv = require('iconv-lite');
 var c = 0;
-// var ep = new EventProxy();
-// var sendMail = require('./action/sendMailFoMy').sendMail;
-// var schedule = require('./action/schedule').schedule;
-var mail = require('./configs').mail;
-var mysql = require('./base/mysql');
+var ep = new EventProxy();
+var sendMail = require('./../action/sendMailFoMy').sendMail;
+var schedule = require('./../action/schedule').schedule;
+var mail = require('./old-configs').mail;
+var mysql = require('./../base/mysql');
 var promise = require('q');
 
 
@@ -105,8 +104,6 @@ var getData = {
         // console.log(option);
         request(option,function(error, response, body){
             // console.log('响应');
-            // console.log(response.statusCode);
-            // console.log(error);
             if (!error && response.statusCode == 200) {
                 // console.log('响应');
 
@@ -148,7 +145,7 @@ var getData = {
 
 
                 getData.getImages(options);
-
+                getData.go();
             }else{
 
 
@@ -195,97 +192,21 @@ var getData = {
                     // var datePath = tool.formDate(new Date(date.getFullYear(),date.getMonth(),date.getDay(),date.getHours()));
                     var datePath = tool.formDate(tool.checkDate(mail.time));
                     title= tool.checkFolderNameElement($,config[getData.c].FolderNameElement,config[getData.c].FolderNamRegExp);
-
-
-
-
-
-
-
-
-
-
-
-                    //过滤title中的不需要内容
-                    // tool.checkFolder(config[getData.c].imagesSavePath + datePath);
-                    //  title = datePath+'/'+title;
-                    tool.checkFolder(config[getData.c].imagesSavePath + title);//创建不存在的文件夹
                     console.log(title);
-                    // console.log(config[getData.c].imagesSavePath + title);
-                    var imgs = tool.handleImgElement($,config[getData.c].imagesInfoElement,config[getData.c].imagesAttr,config[getData.c].imagesNotDownload);
-                    // var imgs = getData.imagesUrl(body,config[c]);
-                    //所有获取到的图片属性src却不重复
-                    // console.log(imgs);
-
-                    // console.log(imgs);
-                    var len = imgs.length;
-
-                    var i = 0;
-                    var s = 0;
-                    for (i; i < len; i++) {
-                        if(imgs[i]) {
-                            var href;
-
-                            if(imgs[i].indexOf('http://')==-1){
-
-                                try{
-                                    href = url.resolve(option.url, imgs[i]);
-                                }catch (e){
-                                    console.log(e);
-                                    continue;
-                                }
-                            }else{
-                                href  = imgs[i];
-                            }
-
-
-                            // console.log(href);
-                            var imagesName = path.basename(href);
-                            var savePath = config[getData.c].imagesSavePath + title + '/' + imagesName;
-                            if (imagesName != undefined) {
-                                var spath = title + '/' + imagesName;
-
-
-                                // console.log(href);
-                                var opntion = {
-                                    url:href,
-                                    timeOut:config[getData.c].imgTimeout,
-                                    path:spath,
-                                    title:title,
-                                    base64:config[getData.c].base64
-                                };
-                                if(config[getData.c].headers.Referer!=''){
-                                    opntion.headers =config[getData.c].headers;
-                                }
-
-
-                                downLoadImg.saveImg(opntion, savePath);
-
-
-
-                            }
-
-
-                        }
-
-
-                        s++;
+                    if(title=='未定义'){
+                        return;
                     }
-
-
-
-
-
-                   /*
                     getData.qTitleId(title,config[getData.c].base64).then(function(data){
                         "use strict";
+                    });
+
 
 
 
 
 
                    //过滤title中的不需要内容
-                    tool.checkFolder(config[getData.c].imagesSavePath + datePath);
+                   //  tool.checkFolder(config[getData.c].imagesSavePath + datePath);
                    //  title = datePath+'/'+title;
                     tool.checkFolder(config[getData.c].imagesSavePath + title);//创建不存在的文件夹
                     // console.log(config[getData.c].imagesSavePath + title);
@@ -324,6 +245,9 @@ var getData = {
 
 
                                 // console.log(href);
+                                if(title!='未定义'){
+
+
                                 var opntion = {
                                     url:href,
                                     timeOut:config[getData.c].imgTimeout,
@@ -338,7 +262,7 @@ var getData = {
 
                                 downLoadImg.saveImg(opntion, savePath);
 
-
+                                }
 
                             }
 
@@ -348,8 +272,7 @@ var getData = {
 
                         s++;
                     }
-                    });
-                    */
+
 
                 }else {
 
@@ -364,8 +287,8 @@ var getData = {
             console.log('图片请求异常'+err);
             // ep.emit('all', durl);
         });
-        console.log('----------------准备请求go--------------');
-        getData.go();
+
+
     },
     'imagesUrl':function (option,body,config) {
         if(config[getData.c].iSgb2312==true){
@@ -393,16 +316,11 @@ var getData = {
         var deferred = promise.defer();
         mysql.query('select id,title from node_title where `title`=? limit 1',[title],function(res){
             if(!res[0]){
-                if(Base64){
-                    Base64=1;
-                }else{
-                    Base64=0;
-                }
-                mysql.insert('node_title',{title:title},function(insertRes){
-                    deferred.resolve(insertRes.insertId)
+                mysql.insert('node_title',{title:title,Base64:Base64},function(insertRes){
+                    deferred.resolve(insertRes.insertId);
                 });
             }else{
-                deferred.resolve(res[0].id)
+                deferred.resolve(res[0].id);
 
             }
 

@@ -4,17 +4,20 @@
   "description": "request",
   "main": "start.js",
   "dependencies": {
+    "archiver-zip": "^0.1.0",
     "cheerio": "^0.20.0",
     "eventproxy": "^0.3.5",
     "express": "^4.14.0",
     "fs": "^0.0.2",
     "iconv-lite": "^0.4.13",
+    "log4js": "^1.1.1",
+    "mysql": "^2.13.0",
+    "mysql-promise": "^4.1.0",
     "path": "^0.12.7",
-    "url": "^0.11.0",
-    "archiver-zip": "^0.1.0",
-    "mysql": "^2.11.1",
     "pm2": "^1.1.3",
-    "q": "^1.4.1"
+    "q": "^1.4.1",
+    "request-promise": "^4.1.1",
+    "url": "^0.11.0"
   },
   "devDependencies": {
     "archiver": "^1.0.1",

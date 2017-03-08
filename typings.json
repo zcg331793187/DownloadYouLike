@@ -1,0 +1,11 @@
+{
+  "globalDependencies": {
+    "cheerio": "registry:dt/cheerio#0.17.0+20161119044246",
+    "node": "registry:dt/node#7.0.0+20170204020307",
+    "request-promise": "registry:dt/request-promise#4.1.0+20161119044246"
+  },
+  "dependencies": {
+    "bluebird": "registry:dt/bluebird#3.0.0+20161229155504",
+    "mysql": "registry:dt/mysql#0.0.0+20170113202751"
+  }
+}
