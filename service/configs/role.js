@@ -35,7 +35,7 @@ exports.configs = [
         isResetDownImage: false,
         urlElement: ['a'],
         urlAttr: ['href'],
-        likeKeyWord: ['.html'],
+        likeKeyWord: ['.html', 'photo'],
         notLikeKeyWord: ['#', 'javascript'],
         autoNext: false,
         autoLoop: false,

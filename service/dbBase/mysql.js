@@ -2,45 +2,69 @@
  * Created by zhoucaiguang on 2017/3/8.
  */
 "use strict";
-const mysqlBase_1 = require('./mysqlBase');
+const SequelizeDb_1 = require('../dbBase/SequelizeDb');
+const log4 = require('log4js');
+let util = require('util');
 // console.log(mysqlBase);
-class mysql extends mysqlBase_1.mysqlBase {
+class mysql {
     constructor() {
-        super();
+        this.log = log4.getLogger();
     }
-    checkDataAndInsert(herfs) {
-        herfs.forEach((item, index) => {
-            this.find('select id from node_url where url=?', [item]).spread((response) => {
-                if (!response) {
-                    this.insert('node_url', { url: item }).then((response) => {
-                    });
-                }
-            });
+    addImgData(titleId, url) {
+        return SequelizeDb_1.ImgDb.create({
+            'titleId': titleId,
+            'url': url
         });
+    }
+    addImgTitle(title, imgThums) {
+        return SequelizeDb_1.TitleDb.create({
+            'title': title,
+            'imgThums': imgThums
+        });
+    }
+    checkImgDataAndInsert(herfs, title) {
+        return SequelizeDb_1.TitleDb.findOne({
+            'where': {
+                'title': title
+            }
+        }).then((response) => {
+            if (!response) {
+                // console.log('标题不存在');
+                this.addImgTitle(title, herfs[0]).then((res) => {
+                    this.addImgs(herfs, res.id); //待测试
+                }).catch((error) => {
+                    console.log(error);
+                });
+            }
+            else {
+                this.addImgs(herfs, response.id);
+            }
+        });
+    }
+    addImgs(herfs, titleId) {
+        let data = this.handleImgData(herfs, titleId);
+        if (data.length > 0) {
+            data.forEach((item, index) => {
+                SequelizeDb_1.ImgDb.findOne({
+                    'where': {
+                        'url': item.url
+                    }
+                }).then((res) => {
+                    if (!res) {
+                        this.addImgData(item.titleId, item.url);
+                    }
+                });
+            });
+        }
+    }
+    handleImgData(hrefs, title) {
+        let data = {};
+        hrefs.forEach((item, index) => {
+            data = { url: item, titleId: title };
+            hrefs[index] = data;
+        });
+        return hrefs;
     }
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = mysql;
-/*
- db.select('select * from node_title').spread((response:any)=>{
-
- console.log(response);
-
- }).catch((response)=>{
- console.log(response);
- });
- */
-/*
- db.insert('node_sort',{namev:'123123'}).spread((response)=>{
- console.log(response);
- });
- */
-/*
- db.update('node_sort',{namev:123,text:'123123123',www:'12312321'},'1=1').spread((response)=>{
-
- console.log(response);
-
- }).catch((error)=>{
- console.log('error:',error);
- });
- */ 

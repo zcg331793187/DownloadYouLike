@@ -1,10 +1,8 @@
 /**
  * Created by zhoucaiguang on 2017/3/8.
  */
-
-
-
-export const log4Config = {
+"use strict";
+exports.log4Config = {
     "appenders": [
         {
             "type": "clustered",

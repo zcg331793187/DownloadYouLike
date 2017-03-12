@@ -6,6 +6,8 @@
   },
   "dependencies": {
     "bluebird": "registry:dt/bluebird#3.0.0+20161229155504",
-    "mysql": "registry:dt/mysql#0.0.0+20170113202751"
+    "log4js": "registry:dt/log4js#0.0.0+20160726182927",
+    "mysql": "registry:dt/mysql#0.0.0+20170113202751",
+    "sequelize": "registry:dt/sequelize#4.0.0+20170307234300"
   }
 }

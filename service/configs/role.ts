@@ -3,18 +3,20 @@
  */
 
 
-interface IConfigs{
+
+export  interface IConfigs{
     url:string,
     imagesKeyWordUrl:string[],
-    urlSearchType:{
-        likeKeyWord:string[],
-        notLikeKeyWord:string[],
-    },
+    likeKeyWord:string[],
+    notLikeKeyWord:string[],
     imagesInfoElement:string[]
-
+    imagesAttr:string[],
+    imagesNotDownload:string[],
+    FolderNamRegExp:any[],
+    FolderNameElement:string[],
+    sortType:string
 
 }
-
 
 
 interface IdbConfigs{
@@ -66,7 +68,7 @@ export const configs = [
         isResetDownImage:false,
         urlElement:['a'],
         urlAttr:['href'],
-        likeKeyWord:['.html'],
+        likeKeyWord:['.html','photo'],
         notLikeKeyWord:['#','javascript'],
         autoNext : false,//是否请求完所有url后执行下一个配置项
         autoLoop : false,//遍历所有url后重新webRoot请求
