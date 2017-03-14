@@ -14,7 +14,7 @@ class robot {
     constructor() {
         this.urlAll = [];
         this.urlNow = [];
-        this.index = 0;
+        this.index = 3;
         this.count = 0;
         this.loop = 0;
         this.db = new mysql_1.default();
@@ -79,7 +79,7 @@ class robot {
             _this.getUrl();
         }).catch((error) => {
             this.log.error(error);
-            console.log(error);
+            console.warn(error);
             _this.getUrl();
         });
     }
@@ -89,7 +89,8 @@ class robot {
             let $ = cheerio.load(req);
             let returnURL = Tool.getAllHref($, task, this.urlAll, this.urlNow);
             let returnImgURL = Tool.handleImagesUrl(this.url, $, task);
-            // console.log(urls);
+            // console.log(returnURL);
+            // console.log(returnImgURL);
             return Promise.resolve([returnURL, returnImgURL]);
         }).catch((err) => {
             this.log.error(err);

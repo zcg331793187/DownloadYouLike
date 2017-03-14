@@ -14,7 +14,7 @@ export class robot{
 
     urlAll:string[] = [];
     urlNow:string[] = [];
-    index:number = 0;
+    index:number = 3;
     count:number = 0;
     task:IConfigs;
     loop:number = 0;
@@ -132,7 +132,7 @@ export class robot{
             _this.getUrl();
     }).catch((error)=>{
             this.log.error(error);
-            console.log(error);
+            console.warn(error);
             _this.getUrl();
         });
 
@@ -160,8 +160,8 @@ export class robot{
 
           let returnImgURL =  Tool.handleImagesUrl(this.url,$,task);
 
-
-            // console.log(urls);
+            // console.log(returnURL);
+            // console.log(returnImgURL);
 
 
             return Promise.resolve([returnURL,returnImgURL]);

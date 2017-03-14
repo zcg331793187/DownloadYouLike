@@ -19,7 +19,8 @@ let sequelize = new Sequelize(
         'define': {
             // 字段以下划线（_）来分割（默认是驼峰命名风格）
             'underscored': true
-        }
+        },
+        logging:false//关闭输出sql日志
     }
 );
 

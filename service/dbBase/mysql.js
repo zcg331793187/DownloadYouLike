@@ -5,7 +5,6 @@
 const SequelizeDb_1 = require('../dbBase/SequelizeDb');
 const log4 = require('log4js');
 let util = require('util');
-// console.log(mysqlBase);
 class mysql {
     constructor() {
         this.log = log4.getLogger();
@@ -33,7 +32,7 @@ class mysql {
                 this.addImgTitle(title, herfs[0]).then((res) => {
                     this.addImgs(herfs, res.id); //待测试
                 }).catch((error) => {
-                    console.log(error);
+                    console.warn(error);
                 });
             }
             else {
@@ -43,16 +42,14 @@ class mysql {
     }
     addImgs(herfs, titleId) {
         let data = this.handleImgData(herfs, titleId);
+        // console.log('待处理图片资源：',data.length);
+        // let _this = this;
         if (data.length > 0) {
             data.forEach((item, index) => {
-                SequelizeDb_1.ImgDb.findOne({
-                    'where': {
-                        'url': item.url
-                    }
-                }).then((res) => {
-                    if (!res) {
-                        this.addImgData(item.titleId, item.url);
-                    }
+                this.addImgData(item.titleId, item.url).then((res) => {
+                    console.log('保存完成');
+                }).catch((error) => {
+                    console.log(error);
                 });
             });
         }

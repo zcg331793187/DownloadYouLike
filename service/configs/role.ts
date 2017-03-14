@@ -72,6 +72,84 @@ export const configs = [
         notLikeKeyWord:['#','javascript'],
         autoNext : false,//是否请求完所有url后执行下一个配置项
         autoLoop : false,//遍历所有url后重新webRoot请求
+    },
+    {
+        url:'http://www.xiuren.org',
+        isSort:true,//是否对url进行排序
+        base64:false,
+        sortType:'asc',//是否对url进行排序 desc 倒序 asc正序
+        imagesInfoElement:['.photoThum a'], //jq获取图片元素
+        imagesKeyWordUrl:['.html'],//图片页面的url关键词
+        imagesAttr:['href'],// 完成
+        imagesType:['jpg'],
+        imagesNotDownload:['logo.png','pixel.png'],
+        isReturnDownload:false,
+        headers:{Referer:''},//未重写
+        iSgb2312:false,//未重写
+        FolderNameElement:['title'],//jq获取标题名元素  思考怎么用数组来搜索多个标题名,匹配到就不匹配后面的元素
+        FolderNamRegExp:[/\s/g,/\//g],
+        timeout:4000,//请求超时
+        urlTimeout:4000,//请求超时
+        imgTimeout:5000,//请求超时
+        isResetDownImage:false,
+        urlElement:['a'],
+        urlAttr:['href'],
+        likeKeyWord:['.html'],
+        notLikeKeyWord: ['#', 'javascript','download','Video','108tv'],
+        autoNext : false,//是否请求完所有url后执行下一个配置项
+        autoLoop : false,//遍历所有url后重新webRoot请求
+    },
+    {
+        url:'http://www.umei.cc',
+        isSort:true,//是否对url进行排序
+        base64:false,
+        sortType:'asc',//是否对url进行排序 desc 倒序 asc正序
+        imagesInfoElement:['#ArticleId0 img'], //jq获取图片元素
+        imagesKeyWordUrl:['.htm'],//图片页面的url关键词
+        imagesAttr:['src'],// 完成
+        imagesType:['jpg'],
+        imagesNotDownload:['logo.png','pixel.png'],
+        isReturnDownload:false,
+        headers:{Referer:''},//未重写
+        iSgb2312:false,//未重写
+        FolderNameElement:['.ArticleTitle strong'],//jq获取标题名元素  思考怎么用数组来搜索多个标题名,匹配到就不匹配后面的元素
+        FolderNamRegExp:[/\s/g,/\//g],
+        timeout:4000,//请求超时
+        urlTimeout:4000,//请求超时
+        imgTimeout:5000,//请求超时
+        isResetDownImage:false,
+        urlElement:['a'],
+        urlAttr:['href'],
+        likeKeyWord:['.htm','gangtai','gaoqing'],
+        notLikeKeyWord: ['#', 'javascript','download','Video','108tv'],
+        autoNext : false,//是否请求完所有url后执行下一个配置项
+        autoLoop : false,//遍历所有url后重新webRoot请求
+    },
+    {
+        url:'http://girl-atlas.net/album/576545e158e039318beb3909',
+        isSort:true,//是否对url进行排序
+        base64:false,
+        sortType:'asc',//是否对url进行排序 desc 倒序 asc正序
+        imagesInfoElement:['.slide img'], //jq获取图片元素
+        imagesKeyWordUrl:['album'],//图片页面的url关键词
+        imagesAttr:['src','delay'],// 完成
+        imagesType:['jpg'],
+        imagesNotDownload:['logo.png','pixel.png'],
+        isReturnDownload:false,
+        headers:{Referer:''},//未重写
+        iSgb2312:false,//未重写
+        FolderNameElement:['.header-right h3'],//jq获取标题名元素  思考怎么用数组来搜索多个标题名,匹配到就不匹配后面的元素
+        FolderNamRegExp:[/\s/g,/\//g],
+        timeout:4000,//请求超时
+        urlTimeout:4000,//请求超时
+        imgTimeout:5000,//请求超时
+        isResetDownImage:false,
+        urlElement:['a'],
+        urlAttr:['href'],
+        likeKeyWord:['album','576545ed58e039318beb3c0b'],
+        notLikeKeyWord: ['#', 'javascript','display'],
+        autoNext : false,//是否请求完所有url后执行下一个配置项
+        autoLoop : false,//遍历所有url后重新webRoot请求
     }
 
 

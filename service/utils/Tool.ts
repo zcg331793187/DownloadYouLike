@@ -51,12 +51,14 @@ export function spliceUrl(host:string,uri:string):string{
     let href =null;
 
 
+    // console.log(host);
+    // console.log(uri);
     try{
          href = url.resolve(host, uri);
 
 
     }catch (e){
-        console.log(e);
+        console.warn(e);
         throw 'url error';
         // href = null;
     }
@@ -74,6 +76,7 @@ export function getAllHref($:any,configs:IConfigs,urlAll:string[],urlNow:string[
     $('a').each((index,ele)=>{
 
 
+        if(ele.attribs.href){
       let path:string =   this.spliceUrl(configs.url,ele.attribs.href);
       let isOk:boolean  =  this.checkUrl(path,configs,urlAll);
       if(isOk){
@@ -81,7 +84,7 @@ export function getAllHref($:any,configs:IConfigs,urlAll:string[],urlNow:string[
           urlNow.push(path);
           array.push(path);
       }
-
+        }
 
 
     });
@@ -114,6 +117,7 @@ export function handleImagesUrl(url:string,$:any,configs:IConfigs){
     let title:string;
     if(isOk){
      imgs =     this.handleImgElement($,configs.imagesInfoElement,configs.imagesAttr,configs.imagesNotDownload);
+
      this.forEachSpliceUrl(url,imgs);
      title =     this.checkFolderNameElement($,configs.FolderNameElement,configs.FolderNamRegExp);
     }
@@ -169,7 +173,7 @@ export function checkFolderNameElement(obj:any,ele:string[],RegExp):string{
 }
 
 
-export function checkRegExp(str:string,exp):string{
+export function checkRegExp(str:string,exp:RegExp):string{
     return str.replace(exp,'');
 }
 
@@ -221,7 +225,7 @@ export function handleImgElement(obj:any,ele:string[],attr:string[],NotDownload:
     return tmps;
 }
 
-export function sortType(arr,config){
+export function sortType(arr:string[],config:string){
     if(config=='desc'){
         arr.reverse();
     }else if(config=='asc'){

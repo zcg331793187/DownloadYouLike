@@ -4,6 +4,7 @@
 
 
 import {ZipCodeValidator}  from './A';
+let url = require('url'); //解析操作url
 
 export const numberRegexp = /^[0-9]+$/;
 
@@ -21,3 +22,9 @@ export const numberRegexp = /^[0-9]+$/;
 let ww  =new ZipCodeValidatowwr();
 
 console.log(ww);
+
+
+
+
+var href = url.resolve('http://www.baidu.com', 'http://www.baidu.com/img.php');
+console.log(href);

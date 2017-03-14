@@ -13,6 +13,11 @@ let util = require('util');
 // console.log(mysqlBase);
 
 
+interface IimgData{
+    url:string,
+    titleId:number
+}
+
 export default  class mysql  {
 
     log;
@@ -64,7 +69,7 @@ export default  class mysql  {
 
                     this.addImgs(herfs,res.id);//待测试
                 }).catch((error)=>{
-                    console.log(error);
+                    console.warn(error);
                 })
 
 
@@ -92,45 +97,29 @@ export default  class mysql  {
 
 
         addImgs (herfs:string[],titleId:number){
-        let data  =   this.handleImgData(herfs,titleId);
 
-        if(data.length>0){
-
+        let data:string[]  =   this.handleImgData(herfs,titleId);
 
 
-            data.forEach((item,index)=>{
-
-                ImgDb.findOne({
-                    'where': {
-                        'url':item.url
-                    }
-                }).then((res)=>{
-
-                    if(!res){ //不存在
-
-
-                        this.addImgData(item.titleId,item.url);
+        // console.log('待处理图片资源：',data.length);
+        // let _this = this;
+            if(data.length>0){
+                data.forEach((item:any,index)=>{
 
 
 
-                    }
+                    this.addImgData(item.titleId,item.url).then((res)=>{
 
+
+                        console.log('保存完成');
+
+                    }).catch((error)=>{
+                        console.log(error);
+                    });
 
 
                 });
-
-
-
-            });
-
-
-
-
-
-
-
-        }
-
+            }
 
     }
 
@@ -148,6 +137,11 @@ export default  class mysql  {
 
         return hrefs;
     }
+
+
+
+
+
 
 
 }

@@ -34,11 +34,13 @@ function checkUrl(url, config, urlAll) {
 exports.checkUrl = checkUrl;
 function spliceUrl(host, uri) {
     let href = null;
+    // console.log(host);
+    // console.log(uri);
     try {
         href = url.resolve(host, uri);
     }
     catch (e) {
-        console.log(e);
+        console.warn(e);
         throw 'url error';
     }
     return href;
@@ -47,12 +49,14 @@ exports.spliceUrl = spliceUrl;
 function getAllHref($, configs, urlAll, urlNow) {
     let array = [];
     $('a').each((index, ele) => {
-        let path = this.spliceUrl(configs.url, ele.attribs.href);
-        let isOk = this.checkUrl(path, configs, urlAll);
-        if (isOk) {
-            urlAll.push(path);
-            urlNow.push(path);
-            array.push(path);
+        if (ele.attribs.href) {
+            let path = this.spliceUrl(configs.url, ele.attribs.href);
+            let isOk = this.checkUrl(path, configs, urlAll);
+            if (isOk) {
+                urlAll.push(path);
+                urlNow.push(path);
+                array.push(path);
+            }
         }
     });
     return array;
