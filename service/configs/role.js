@@ -54,7 +54,7 @@ exports.configs = [
         headers: { Referer: '' },
         iSgb2312: false,
         FolderNameElement: ['title'],
-        FolderNamRegExp: [/\s/g, /\//g],
+        FolderNamRegExp: [/\s/g, /\//g, /XiuRen.org/g, /秀人网$/],
         timeout: 4000,
         urlTimeout: 4000,
         imgTimeout: 5000,
@@ -64,7 +64,7 @@ exports.configs = [
         likeKeyWord: ['.html'],
         notLikeKeyWord: ['#', 'javascript', 'download', 'Video', '108tv'],
         autoNext: false,
-        autoLoop: false,
+        autoLoop: true,
     },
     {
         url: 'http://www.umei.cc',
@@ -93,7 +93,7 @@ exports.configs = [
         autoLoop: false,
     },
     {
-        url: 'http://girl-atlas.net/album/576545e158e039318beb3909',
+        url: 'http://girl-atlas.net',
         isSort: true,
         base64: false,
         sortType: 'asc',
@@ -113,9 +113,9 @@ exports.configs = [
         isResetDownImage: false,
         urlElement: ['a'],
         urlAttr: ['href'],
-        likeKeyWord: ['album', '576545ed58e039318beb3c0b'],
+        likeKeyWord: ['album'],
         notLikeKeyWord: ['#', 'javascript', 'display'],
         autoNext: false,
-        autoLoop: false,
+        autoLoop: true,
     }
 ];

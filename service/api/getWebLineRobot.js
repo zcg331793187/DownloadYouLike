@@ -14,7 +14,7 @@ class robot {
     constructor() {
         this.urlAll = [];
         this.urlNow = [];
-        this.index = 3;
+        this.index = 0;
         this.count = 0;
         this.loop = 0;
         this.db = new mysql_1.default();
@@ -42,14 +42,27 @@ class robot {
         // console.log(ddd);
         this.getUrl();
     }
+    handelAuto() {
+        let task = role_1.configs[this.index];
+        if (!task) {
+            this.index = 0;
+            return this.handelAuto();
+        }
+        if (task['autoLoop'] == true) {
+            this.index++;
+            console.log(task.url);
+            return task;
+        }
+        this.index++;
+        return this.handelAuto();
+    }
     getUrl() {
         let _this = this;
-        // console.log('开始时间:', new Date());
-        _this.task = role_1.configs[_this.index];
         if (_this.urlNow.length == 0) {
             _this.urlAll = [];
             _this.urlNow = [];
             _this.count = 0;
+            _this.task = _this.handelAuto();
             _this.url = _this.task.url;
             _this.loop++;
         }
