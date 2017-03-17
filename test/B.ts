@@ -21,10 +21,10 @@ export const numberRegexp = /^[0-9]+$/;
 
 let ww  =new ZipCodeValidatowwr();
 
-console.log(ww);
+// console.log(ww);
 
 
 
 
-var href = url.resolve('http://www.baidu.com', 'http://www.baidu.com/img.php');
+var href = url.resolve('http://www.rosmm.com/rosimm/2017/02/21/2156.htm', '2156_2.htm');
 console.log(href);

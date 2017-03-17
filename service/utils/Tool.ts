@@ -69,7 +69,7 @@ export function spliceUrl(host:string,uri:string):string{
     return href;
 }
 
-export function getAllHref($:any,configs:IConfigs,urlAll:string[],urlNow:string[]):string[]{
+export function getAllHref($:any,_thisUrl:string,configs:IConfigs,urlAll:string[],urlNow:string[]):string[]{
 
     let array:string[] = [];
 
@@ -77,7 +77,7 @@ export function getAllHref($:any,configs:IConfigs,urlAll:string[],urlNow:string[
 
 
         if(ele.attribs.href){
-      let path:string =   this.spliceUrl(configs.url,ele.attribs.href);
+      let path:string =   this.spliceUrl(_thisUrl,ele.attribs.href);
       let isOk:boolean  =  this.checkUrl(path,configs,urlAll);
       if(isOk){
           urlAll.push(path);

@@ -10,11 +10,12 @@ const mysql_1 = require('../dbBase/mysql');
 const Promise = require('bluebird');
 const log4 = require('log4js');
 const log4_1 = require('../configs/log4');
+let iconv = require('iconv-lite');
 class robot {
     constructor() {
         this.urlAll = [];
         this.urlNow = [];
-        this.index = 0;
+        this.index = 6;
         this.count = 0;
         this.loop = 0;
         this.db = new mysql_1.default();
@@ -97,10 +98,13 @@ class robot {
         });
     }
     loopGetUrl(url, task) {
-        return req_1.httpGet(url).then((req) => {
+        return req_1.httpGet(url, {}, task).then((req) => {
+            if (task.iSgb2312 == true) {
+                req = iconv.decode(req, 'gb2312');
+            }
             this.count++;
             let $ = cheerio.load(req);
-            let returnURL = Tool.getAllHref($, task, this.urlAll, this.urlNow);
+            let returnURL = Tool.getAllHref($, url, task, this.urlAll, this.urlNow);
             let returnImgURL = Tool.handleImagesUrl(this.url, $, task);
             // console.log(returnURL);
             // console.log(returnImgURL);

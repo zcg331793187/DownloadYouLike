@@ -9,7 +9,7 @@ const Promise = require('bluebird');
     MethodEnum[MethodEnum["POST"] = 1] = "POST";
 })(exports.MethodEnum || (exports.MethodEnum = {}));
 var MethodEnum = exports.MethodEnum;
-function processOptions(method, option, data) {
+function processOptions(method, option, data, config) {
     if (method == MethodEnum.GET) {
         option.qs = data;
     }
@@ -19,23 +19,26 @@ function processOptions(method, option, data) {
     else {
         throw ('未知的请求方式');
     }
+    if (config.iSgb2312 == true) {
+        option.encoding = null;
+    }
 }
-function req(uri, data, method) {
+function req(uri, data, method, config) {
     var options = {
         uri: uri
     };
-    processOptions(method, options, data);
+    processOptions(method, options, data, config);
     return rp(options).then((response) => {
         return Promise.resolve(response);
     }).catch((err) => {
         return Promise.reject(err);
     });
 }
-function httpGet(uri, data = {}) {
-    return req(uri, data, MethodEnum.GET);
+function httpGet(uri, data = {}, config) {
+    return req(uri, data, MethodEnum.GET, config);
 }
 exports.httpGet = httpGet;
-function httpPost(uri, data = {}) {
-    return req(uri, data, MethodEnum.POST);
+function httpPost(uri, data = {}, config) {
+    return req(uri, data, MethodEnum.POST, config);
 }
 exports.httpPost = httpPost;

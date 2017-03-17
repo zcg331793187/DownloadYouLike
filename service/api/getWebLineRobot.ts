@@ -10,11 +10,13 @@ import mysql from '../dbBase/mysql';
 import * as Promise from 'bluebird';
 import * as log4 from 'log4js';
 import {log4Config} from '../configs/log4';
+let iconv = require('iconv-lite');
+
 export class robot{
 
     urlAll:string[] = [];
     urlNow:string[] = [];
-    index:number = 0;
+    index:number = 6;
     count:number = 0;
     task:IConfigs;
     loop:number = 0;
@@ -176,16 +178,20 @@ export class robot{
 
     loopGetUrl(url:string,task){
 
-     return    httpGet(url).then((req:string)=>{
+     return    httpGet(url,{},task).then((req:string)=>{
 
 
+                    if(task.iSgb2312==true){
+                        req = iconv.decode(req, 'gb2312');
+                    }
 
 
 
          this.count++;
 
+
             let $ = cheerio.load(req);
-          let  returnURL = Tool.getAllHref($,task,this.urlAll,this.urlNow);
+          let  returnURL = Tool.getAllHref($,url,task,this.urlAll,this.urlNow);
 
           let returnImgURL =  Tool.handleImagesUrl(this.url,$,task);
 

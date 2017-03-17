@@ -46,11 +46,11 @@ function spliceUrl(host, uri) {
     return href;
 }
 exports.spliceUrl = spliceUrl;
-function getAllHref($, configs, urlAll, urlNow) {
+function getAllHref($, _thisUrl, configs, urlAll, urlNow) {
     let array = [];
     $('a').each((index, ele) => {
         if (ele.attribs.href) {
-            let path = this.spliceUrl(configs.url, ele.attribs.href);
+            let path = this.spliceUrl(_thisUrl, ele.attribs.href);
             let isOk = this.checkUrl(path, configs, urlAll);
             if (isOk) {
                 urlAll.push(path);

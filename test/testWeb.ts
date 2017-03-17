@@ -2,19 +2,19 @@
  * Created by zhoucaiguang on 2017/3/10.
  */
 import {httpGet} from '../service/api/req';
-import * as Promise from 'bluebird';
 
+let iconv = require('iconv-lite');
 
 
 
 
 function send(url){
 
-    httpGet(url).then((req:string)=>{
+    httpGet(url,{},{iSgb2312:true}).then((req:string)=>{
 
+     var    body = iconv.decode(req, 'gb2312');
 
-
-        console.log(req);
+        console.log(body);
 
 
     }).catch((err)=>{
@@ -24,4 +24,4 @@ function send(url){
 }
 
 
-send('http://www.xiuren.org/category/TuiGirl-2.html');
+send('http://www.rosmm.com');

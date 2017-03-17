@@ -12,6 +12,6 @@ class ZipCodeValidatowwr extends A_1.ZipCodeValidator {
     }
 }
 let ww = new ZipCodeValidatowwr();
-console.log(ww);
-var href = url.resolve('http://www.baidu.com', 'http://www.baidu.com/img.php');
+// console.log(ww);
+var href = url.resolve('http://www.rosmm.com/rosimm/2017/02/21/2156.htm', '2156_2.htm');
 console.log(href);

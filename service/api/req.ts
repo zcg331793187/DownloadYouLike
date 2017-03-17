@@ -14,8 +14,10 @@ export interface IRequestOption{
     qs?:Object,
     body?:Object,
     json?:boolean,
-    encoding?:string
+    encoding?:string,
+    iSgb2312?:boolean
 }
+
 
 
 export enum MethodEnum{
@@ -23,7 +25,7 @@ export enum MethodEnum{
 }
 
 
-function  processOptions(method:MethodEnum,option:IRequestOption,data:Object){
+function  processOptions(method:MethodEnum,option:IRequestOption,data:Object,config:IRequestOption){
 
 
 
@@ -43,18 +45,25 @@ function  processOptions(method:MethodEnum,option:IRequestOption,data:Object){
 
     }
 
+    if(config.iSgb2312==true){
+        option.encoding = null;
+    }
+
+
 
 }
 
 
 
 
-function req(uri:string,data:Object,method:MethodEnum):Promise<Object>{
+function req(uri:string,data:Object,method:MethodEnum,config:IRequestOption):Promise<Object>{
     var options:IRequestOption = <IRequestOption>{
         uri:uri
     };
 
-    processOptions(method,options,data);
+
+
+    processOptions(method,options,data,config);
 
 
 
@@ -72,18 +81,18 @@ function req(uri:string,data:Object,method:MethodEnum):Promise<Object>{
 }
 
 
-export function httpGet(uri:string,data:Object={}):Promise<Object>{
+export function httpGet(uri:string,data:Object={},config):Promise<Object>{
 
 
-    return req(uri,data,MethodEnum.GET);
+    return req(uri,data,MethodEnum.GET,config);
 
 
 }
 
 
-export function httpPost(uri:string,data:Object={}):Promise<Object>{
+export function httpPost(uri:string,data:Object={},config):Promise<Object>{
 
-    return req(uri,data,MethodEnum.POST);
+    return req(uri,data,MethodEnum.POST,config);
 
 }
 
