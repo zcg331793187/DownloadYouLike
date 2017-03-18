@@ -15,7 +15,7 @@ class robot {
     constructor() {
         this.urlAll = [];
         this.urlNow = [];
-        this.index = 6;
+        this.index = 7;
         this.count = 0;
         this.loop = 0;
         this.db = new mysql_1.default();

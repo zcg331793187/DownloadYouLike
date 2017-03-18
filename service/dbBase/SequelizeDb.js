@@ -49,6 +49,10 @@ let TitleDb = sequelize.define('title', {
     'imgThums': {
         'type': Sequelize.STRING(255),
         'allowNull': true //是否可以为空
+    },
+    'status': {
+        'type': Sequelize.INTEGER,
+        'allowNull': true
     }
 }, {
     // 自定义表名

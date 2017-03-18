@@ -32434,3 +32434,39 @@
      caseless: Caseless { dict: [Object] },
      read: [Function],
      body: <Buffer 3c 21 44 4f 43 54 59 50 45 20 48 54 4d 4c 20 50 55 42 4c 49 43 20 22 2d 2f 2f 49 45 54 46 2f 2f 44 54 44 20 48 54 4d 4c 20 32 2e 30 2f 2f 45 4e 22 3e ... > } }
+[2017-03-18 01:53:36.728] [ERROR] [default] - { RequestError: Error: read ECONNRESET
+    at new RequestError (/Users/zhoucaiguang/WWW/DownloadYouLike/node_modules/.1.1.1@request-promise-core/lib/errors.js:14:15)
+    at Request.plumbing.callback (/Users/zhoucaiguang/WWW/DownloadYouLike/node_modules/.1.1.1@request-promise-core/lib/plumbing.js:87:29)
+    at Request.RP$callback [as _callback] (/Users/zhoucaiguang/WWW/DownloadYouLike/node_modules/.1.1.1@request-promise-core/lib/plumbing.js:46:31)
+    at self.callback (/Users/zhoucaiguang/WWW/DownloadYouLike/node_modules/request/request.js:187:22)
+    at emitOne (events.js:96:13)
+    at Request.emit (events.js:188:7)
+    at Request.onRequestError (/Users/zhoucaiguang/WWW/DownloadYouLike/node_modules/request/request.js:813:8)
+    at emitOne (events.js:96:13)
+    at ClientRequest.emit (events.js:188:7)
+    at Socket.socketErrorListener (_http_client.js:310:9)
+    at emitOne (events.js:96:13)
+    at Socket.emit (events.js:188:7)
+    at emitErrorNT (net.js:1278:8)
+    at _combinedTickCallback (internal/process/next_tick.js:74:11)
+    at process._tickCallback (internal/process/next_tick.js:98:9)
+  name: 'RequestError',
+  message: 'Error: read ECONNRESET',
+  cause: 
+   { Error: read ECONNRESET
+       at exports._errnoException (util.js:1022:11)
+       at TCP.onread (net.js:569:26) code: 'ECONNRESET', errno: 'ECONNRESET', syscall: 'read' },
+  error: 
+   { Error: read ECONNRESET
+       at exports._errnoException (util.js:1022:11)
+       at TCP.onread (net.js:569:26) code: 'ECONNRESET', errno: 'ECONNRESET', syscall: 'read' },
+  options: 
+   { uri: 'http://www.177pic.info',
+     qs: {},
+     encoding: null,
+     callback: [Function: RP$callback],
+     transform: undefined,
+     simple: true,
+     resolveWithFullResponse: false,
+     transform2xxOnly: false },
+  response: undefined }

@@ -16,7 +16,7 @@ export class robot{
 
     urlAll:string[] = [];
     urlNow:string[] = [];
-    index:number = 6;
+    index:number = 7;
     count:number = 0;
     task:IConfigs;
     loop:number = 0;
