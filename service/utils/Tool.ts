@@ -3,6 +3,7 @@
  */
 
 import {IConfigs} from '../configs/role';
+import {fn} from "sequelize";
 
 
 
@@ -231,4 +232,71 @@ export function sortType(arr:string[],config:string){
     }else if(config=='asc'){
         arr.sort();
     }
+}
+
+
+
+
+
+
+export function handleWeiBoImgs(req:Object):Object{
+    let imgs:string[] =[];
+
+
+    req['cards'].forEach((item)=>{
+        // console.log(item['mblog']['pics']);
+
+        if(item['mblog']['pics']){
+
+            item['mblog']['pics'].forEach((item)=>{
+
+                // console.log(item['large']['url']);
+                imgs.push(item['large']['url']);
+            })
+
+        }
+
+
+
+    });
+
+    return imgs;
+}
+
+export function handleWeiBoFollows(req:Object):Object[]{
+    let followList:any[] =[];
+
+    if(req['cardlistInfo'].page){
+
+
+
+
+        if(req['cards']){
+
+
+    req['cards'].forEach((item)=>{
+        // console.log(item['mblog']['pics']);
+
+        if(item['user']){
+
+            followList.push({uid:item['user']['id'],nickName:item['user']['screen_name']});
+
+        }
+
+
+
+    });
+        }
+    }
+
+    return followList;
+}
+
+
+export  function  getContainerId(res):string{
+
+
+
+    return decodeURIComponent(res.headers['set-cookie'][2]).match(/fid=+[0-9]+/i)[0].replace(/fid=/,'');
+
 }

@@ -157,3 +157,36 @@ function sortType(arr, config) {
     }
 }
 exports.sortType = sortType;
+function handleWeiBoImgs(req) {
+    let imgs = [];
+    req['cards'].forEach((item) => {
+        // console.log(item['mblog']['pics']);
+        if (item['mblog']['pics']) {
+            item['mblog']['pics'].forEach((item) => {
+                // console.log(item['large']['url']);
+                imgs.push(item['large']['url']);
+            });
+        }
+    });
+    return imgs;
+}
+exports.handleWeiBoImgs = handleWeiBoImgs;
+function handleWeiBoFollows(req) {
+    let followList = [];
+    if (req['cardlistInfo'].page) {
+        if (req['cards']) {
+            req['cards'].forEach((item) => {
+                // console.log(item['mblog']['pics']);
+                if (item['user']) {
+                    followList.push({ uid: item['user']['id'], nickName: item['user']['screen_name'] });
+                }
+            });
+        }
+    }
+    return followList;
+}
+exports.handleWeiBoFollows = handleWeiBoFollows;
+function getContainerId(res) {
+    return decodeURIComponent(res.headers['set-cookie'][2]).match(/fid=+[0-9]+/i)[0].replace(/fid=/, '');
+}
+exports.getContainerId = getContainerId;

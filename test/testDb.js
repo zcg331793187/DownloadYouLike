@@ -83,6 +83,9 @@ function textPromise() {
 // console.log();
 // let res =  textPromise();
 // console.log(res);
+Title.find({ 'limit': 1, offset: 2 }).then(res => {
+    console.log(res);
+});
 // let dataAll =  Title.findAll();
 // let datafindById =  Title.findById('21');
 // let datafindAndCount =  Title.findAndCount();

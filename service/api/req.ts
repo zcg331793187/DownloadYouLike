@@ -15,7 +15,8 @@ export interface IRequestOption{
     body?:Object,
     json?:boolean,
     encoding?:string,
-    iSgb2312?:boolean
+    iSgb2312?:boolean,
+    resolveWithFullResponse?:boolean
 }
 
 
@@ -48,6 +49,12 @@ function  processOptions(method:MethodEnum,option:IRequestOption,data:Object,con
     if(config.iSgb2312==true){
         option.encoding = null;
     }
+    if(config.headers){
+        option.headers = config.headers
+    }
+
+
+    // console.log(option);
 
 
 
@@ -58,9 +65,12 @@ function  processOptions(method:MethodEnum,option:IRequestOption,data:Object,con
 
 function req(uri:string,data:Object,method:MethodEnum,config:IRequestOption):Promise<Object>{
     var options:IRequestOption = <IRequestOption>{
-        uri:uri
+        uri:uri,
     };
 
+    if(config.resolveWithFullResponse){
+        options.resolveWithFullResponse = true
+    }
 
 
     processOptions(method,options,data,config);
@@ -68,6 +78,8 @@ function req(uri:string,data:Object,method:MethodEnum,config:IRequestOption):Pro
 
 
     return rp(options).then((response)=>{
+
+
 
         return Promise.resolve(response);
 
@@ -81,7 +93,7 @@ function req(uri:string,data:Object,method:MethodEnum,config:IRequestOption):Pro
 }
 
 
-export function httpGet(uri:string,data:Object={},config):Promise<Object>{
+export function httpGet(uri:string,data:Object={},config):Promise<any>{
 
 
     return req(uri,data,MethodEnum.GET,config);

@@ -22,11 +22,18 @@ function processOptions(method, option, data, config) {
     if (config.iSgb2312 == true) {
         option.encoding = null;
     }
+    if (config.headers) {
+        option.headers = config.headers;
+    }
+    // console.log(option);
 }
 function req(uri, data, method, config) {
     var options = {
-        uri: uri
+        uri: uri,
     };
+    if (config.resolveWithFullResponse) {
+        options.resolveWithFullResponse = true;
+    }
     processOptions(method, options, data, config);
     return rp(options).then((response) => {
         return Promise.resolve(response);

@@ -62,3 +62,25 @@ let TitleDb = sequelize.define('title', {
     'timestamps': false,
 });
 exports.TitleDb = TitleDb;
+let WeiboDb = sequelize.define('title', {
+    'uid': {
+        'type': Sequelize.INTEGER,
+        'allowNull': true,
+        'unique': false // 字段是否UNIQUE
+    },
+    'containerId': {
+        'type': Sequelize.STRING(255),
+        'allowNull': true //是否可以为空
+    },
+    'niceName': {
+        'type': Sequelize.STRING(255),
+        'allowNull': true
+    }
+}, {
+    // 自定义表名
+    'freezeTableName': true,
+    'tableName': 'node_weibo_follow',
+    // 是否需要增加createdAt、updatedAt、deletedAt字段
+    'timestamps': false,
+});
+exports.WeiboDb = WeiboDb;

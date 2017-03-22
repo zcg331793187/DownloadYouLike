@@ -3,8 +3,8 @@
  */
 
 
-import  {TitleDb,ImgDb} from '../dbBase/SequelizeDb';
-import * as Promise from 'bluebird';
+import  {TitleDb,ImgDb,WeiboDb} from '../dbBase/SequelizeDb';
+// import * as Promise from 'bluebird';
 import * as log4 from 'log4js';
 
 let util = require('util');
@@ -28,26 +28,37 @@ export default  class mysql  {
     }
 
 
-     addImgData (titleId:number, url:string):Promise<Object>{
+    async addImgData (titleId:number, url:string){
 
-        return   ImgDb.create({
-            'titleId': titleId,
-            'url': url
-        });
 
+
+        await ImgDb.create({
+             'titleId': titleId,
+             'url': url
+         });
     }
 
 
-     addImgTitle (title:string, imgThums:string):Promise<Object>{
-
-        return   TitleDb.create({
-            'title': title,
-            'imgThums': imgThums
-        });
+    async addImgTitle (title:string, imgThums:string){
 
 
+
+              return  await TitleDb.create({
+                    'title': title,
+                    'imgThums': imgThums
+                });
 
     }
+
+    async checkTtileIsSave(title) {
+
+     return   await TitleDb.findOne({
+            'where': {
+                'title': title
+            }
+        })
+    }
+
 
 
     checkImgDataAndInsert(herfs: string[],title:string) {
@@ -138,9 +149,47 @@ export default  class mysql  {
         return hrefs;
     }
 
+    async addWeiBoImgs (imgs,titleId:number) {
+
+        for( let i in imgs){
+
+            await  ImgDb.create({
+                'titleId': titleId, 'url': imgs[i]}).catch(error=>{
+                // console.warn(error);
+            })
+        }
+        return imgs;
 
 
 
+    }
+
+  async  getWeiBoFollow(offset){
+
+
+
+
+
+   let data =   await    WeiboDb.find({'attributes': ['id', 'containerId','niceName'],'limit': 1,offset:offset});
+
+
+   return data;
+    }
+
+
+   async insertWeiBoFollow (data:Object[]) {
+
+
+
+        for( let i in data){
+
+          await  WeiboDb.create({
+                'uid': data[i]['uid'], 'niceName': data[i]['nickName'], 'containerId':data[i]['containerId']}).catch(error=>{
+                    // console.warn(error);
+          })
+        }
+       return data;
+    }
 
 
 
