@@ -4,7 +4,7 @@
 
 import {httpGet} from './req';
 import {configs, IConfigs} from '../configs/role';
-import { followListAPi, followListConfig, weiboUserDataApi, weiboMobileApi} from '../configs/weiboRole';
+import {followListAPi, followListConfig, weiboUserDataApi, weiboMobileApi} from '../configs/weiboRole';
 import  * as cheerio  from 'cheerio';
 import * as Tool from '../utils/Tool';
 import mysql from '../dbBase/mysql';
@@ -13,16 +13,22 @@ import * as log4 from 'log4js';
 import {log4Config} from '../configs/log4';
 let iconv = require('iconv-lite');
 
-interface Irobot{
-    init():void
-    handelAuto():void
-    getWeiboFollowInit(page:number):void
-    getWeiboFollowList(page:number):void
-    getWeiboImgInit(page:number, offset:number)
-    setTimeout(m:number)
-    getWeiboUserContainerId(data:Object[])
-    getWeiboMobileContainerId(data:Object[])
-    getWeiboUrl(page:number, offset:number):Object
+interface ICotainerId {
+
+    containerId: number
+    uid: number
+}
+
+interface Irobot {
+    init(): void
+    handelAuto(): void
+    getWeiboFollowInit(page: number): void
+    getWeiboFollowList(page: number): void
+    getWeiboImgInit(page: number, offset: number)
+    setTimeout(m: number)
+    getWeiboUserContainerId(data:ICotainerId[])
+    getWeiboMobileContainerId(data: ICotainerId[])
+    getWeiboUrl(page: number, offset: number): Object
 }
 
 
@@ -83,7 +89,6 @@ export class robot implements Irobot {
         //
 
 
-
         this.getUrl();
 
         this.getWeiboImgInit(0, 0);
@@ -110,7 +115,7 @@ export class robot implements Irobot {
         return this.handelAuto();
     }
 
-    getWeiboFollowInit(page) {
+    getWeiboFollowInit(page: number) {
 
 
         this.getWeiboFollowList(page).then(res => {
@@ -127,7 +132,7 @@ export class robot implements Irobot {
     }
 
 
-    getWeiboImgInit(page, offset) {
+    getWeiboImgInit(page: number, offset: number) {
 
         this.getWeiboUrl(page, offset).then(res => {
 
@@ -146,7 +151,7 @@ export class robot implements Irobot {
     }
 
 
-    async getWeiboFollowList(page) {
+    async getWeiboFollowList(page: number) {
 
         console.log(page);
         let config: any = followListConfig[this.indexFollow];
@@ -192,7 +197,7 @@ export class robot implements Irobot {
     }
 
 
-    async setTimeout(m) {
+    async setTimeout(m: number) {
         return new Promise((resolve, reject) => {
             setTimeout(() => {
                 resolve(null);
@@ -206,8 +211,8 @@ export class robot implements Irobot {
 
         for (let i of data) {
 
-            i['containerId'] = await httpGet(weiboMobileApi + i.uid, {}, {resolveWithFullResponse: true});
-            i['containerId'] = Tool.getContainerId(i['containerId']);
+            i.containerId = await httpGet(weiboMobileApi + i.uid, {}, {resolveWithFullResponse: true});
+            i.containerId = Tool.getContainerId(i.containerId);
 
         }
 
@@ -221,10 +226,10 @@ export class robot implements Irobot {
 
         for (let i of data) {
 
-            temp = await httpGet(weiboUserDataApi, {uid: i['uid'], containerid: i['containerId']}, {});
+            temp = await httpGet(weiboUserDataApi, {uid: i.uid, containerid: i.containerId}, {});
 
             temp = JSON.parse(temp);
-            i['containerId'] = temp['tabsInfo']['tabs'][1]['containerid'];
+            i.containerId = temp['tabsInfo']['tabs'][1]['containerid'];
 
         }
 
@@ -236,7 +241,7 @@ export class robot implements Irobot {
 
 
         let configDb = await  this.db.getWeiBoFollow(offset);
-        let idObj: Object;
+        let idObj: {id:number};
         let config: Object = {};
         let data;
 
@@ -256,7 +261,7 @@ export class robot implements Irobot {
                     idObj = await    this.db.addImgTitle(configDb.niceName, imgs[0]);
                 }
 
-                await this.db.addWeiBoImgs(imgs, idObj['id']);
+                await this.db.addWeiBoImgs(imgs, idObj.id);
 
             } catch (error) {
                 console.warn(error.statusCode);
@@ -301,13 +306,10 @@ export class robot implements Irobot {
 
         console.log('进行地址：', _this.url);
 
-       _this.loopGetUrl(_this.url, {}, _this.task).then((res: any) => {
+        _this.loopGetUrl(_this.url, {}, _this.task).then((res: any) => {
             // console.log(this.urlAll.length);
             // console.log('当前时间:', new Date());
             console.log('本次获取新地址数:', res.length);
-
-
-
 
 
             if (res[1]) {
@@ -354,9 +356,9 @@ export class robot implements Irobot {
             this.count++;
 
             let $ = cheerio.load(req);
-             returnURL = Tool.getAllHref($, url, task, this.urlAll, this.urlNow);
+            returnURL = Tool.getAllHref($, url, task, this.urlAll, this.urlNow);
 
-             returnImgURL = Tool.handleImagesUrl(this.url, $, task);
+            returnImgURL = Tool.handleImagesUrl(this.url, $, task);
 
         } catch (error) {
 
@@ -367,8 +369,6 @@ export class robot implements Irobot {
 
 
         return [returnURL, returnImgURL];
-
-
 
 
     }

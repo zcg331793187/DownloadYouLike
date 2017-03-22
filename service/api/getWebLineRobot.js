@@ -135,8 +135,8 @@ class robot {
     getWeiboUserContainerId(data) {
         return __awaiter(this, void 0, void 0, function* () {
             for (let i of data) {
-                i['containerId'] = yield req_1.httpGet(weiboRole_1.weiboMobileApi + i.uid, {}, { resolveWithFullResponse: true });
-                i['containerId'] = Tool.getContainerId(i['containerId']);
+                i.containerId = yield req_1.httpGet(weiboRole_1.weiboMobileApi + i.uid, {}, { resolveWithFullResponse: true });
+                i.containerId = Tool.getContainerId(i.containerId);
             }
             return data;
         });
@@ -145,9 +145,9 @@ class robot {
         return __awaiter(this, void 0, void 0, function* () {
             let temp;
             for (let i of data) {
-                temp = yield req_1.httpGet(weiboRole_1.weiboUserDataApi, { uid: i['uid'], containerid: i['containerId'] }, {});
+                temp = yield req_1.httpGet(weiboRole_1.weiboUserDataApi, { uid: i.uid, containerid: i.containerId }, {});
                 temp = JSON.parse(temp);
-                i['containerId'] = temp['tabsInfo']['tabs'][1]['containerid'];
+                i.containerId = temp['tabsInfo']['tabs'][1]['containerid'];
             }
             return data;
         });
@@ -168,7 +168,7 @@ class robot {
                     if (!idObj) {
                         idObj = yield this.db.addImgTitle(configDb.niceName, imgs[0]);
                     }
-                    yield this.db.addWeiBoImgs(imgs, idObj['id']);
+                    yield this.db.addWeiBoImgs(imgs, idObj.id);
                 }
                 catch (error) {
                     console.warn(error.statusCode);
