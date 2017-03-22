@@ -4,7 +4,7 @@
 
 import {httpGet} from './req';
 import {configs, IConfigs} from '../configs/role';
-import {weiboConfig, followListAPi, followListConfig, weiboUserDataApi, weiboMobileApi} from '../configs/weiboRole';
+import { followListAPi, followListConfig, weiboUserDataApi, weiboMobileApi} from '../configs/weiboRole';
 import  * as cheerio  from 'cheerio';
 import * as Tool from '../utils/Tool';
 import mysql from '../dbBase/mysql';
@@ -13,7 +13,20 @@ import * as log4 from 'log4js';
 import {log4Config} from '../configs/log4';
 let iconv = require('iconv-lite');
 
-export class robot {
+interface Irobot{
+    init():void
+    handelAuto():void
+    getWeiboFollowInit(page:number):void
+    getWeiboFollowList(page:number):void
+    getWeiboImgInit(page:number, offset:number)
+    setTimeout(m:number)
+    getWeiboUserContainerId(data:Object[])
+    getWeiboMobileContainerId(data:Object[])
+    getWeiboUrl(page:number, offset:number):Object
+}
+
+
+export class robot implements Irobot {
 
     urlAll: string[] = [];
     urlNow: string[] = [];
@@ -68,10 +81,10 @@ export class robot {
 
         // let ddd =   this.test();
         //
-        // console.log(ddd);
 
 
-        // this.getUrl();
+
+        this.getUrl();
 
         this.getWeiboImgInit(0, 0);
         // this.getWeiboFollowInit(0);
@@ -227,32 +240,38 @@ export class robot {
         let config: Object = {};
         let data;
 
+        if (configDb) {
 
-        try {
-            config = {page: page, uid: configDb.uid, containerid: configDb.containerId};
-            data = await httpGet('http://m.weibo.cn/container/getIndex', config, {});
 
-            data = JSON.parse(data);
+            try {
+                config = {page: page, uid: configDb.uid, containerid: configDb.containerId};
+                data = await httpGet(weiboUserDataApi, config, {});
 
-            let imgs = Tool.handleWeiBoImgs(data);
+                data = JSON.parse(data);
 
-            idObj = await this.db.checkTtileIsSave(configDb.niceName);
-            if (!idObj) {
-                idObj = await    this.db.addImgTitle(configDb.niceName, imgs[0]);
+                let imgs = Tool.handleWeiBoImgs(data);
+
+                idObj = await this.db.checkTtileIsSave(configDb.niceName);
+                if (!idObj) {
+                    idObj = await    this.db.addImgTitle(configDb.niceName, imgs[0]);
+                }
+
+                await this.db.addWeiBoImgs(imgs, idObj['id']);
+
+            } catch (error) {
+                console.warn(error.statusCode);
+                if (error.statusCode == 403) {
+                    await this.setTimeout(120);
+                }
             }
 
-            await this.db.addWeiBoImgs(imgs, idObj['id']);
 
-        } catch (error) {
-            console.warn(error.statusCode);
-            if (error.statusCode == 403) {
-                await this.setTimeout(120);
-            }
+            page++;
+        } else {
+            console.log('没有可用微博爬虫配置信息');
+            await this.setTimeout(360);
         }
-
-
-        page++;
-        await this.setTimeout(5);
+        await this.setTimeout(3);
         // console.log(data);
 
         return {page: page, _data: data, offset: offset};
@@ -281,17 +300,15 @@ export class robot {
         }
 
         console.log('进行地址：', _this.url);
-        _this.loopGetUrl(_this.url, {}, _this.task).then((res: any) => {
+
+       _this.loopGetUrl(_this.url, {}, _this.task).then((res: any) => {
             // console.log(this.urlAll.length);
             // console.log('当前时间:', new Date());
             console.log('本次获取新地址数:', res.length);
 
-            if (res[0]) {
 
 
-                // _this.db.checkDataAndInsert(res[0]);
-            }
-            // console.log(res);
+
 
             if (res[1]) {
 
@@ -299,7 +316,7 @@ export class robot {
                 // console.log(res[1]);
                 if (res[1].title && res[1].list.length > 0) {
                     _this.db.checkImgDataAndInsert(res[1].list, res[1].title).then((res) => {
-                        console.log(res);
+                        // console.log(res);
                     });
                 }
             }
@@ -320,36 +337,38 @@ export class robot {
     }
 
 
-    loopGetUrl(url: string, data, task) {
+    async    loopGetUrl(url: string, data, task) {
 
-        return httpGet(url, data, task).then((req: string) => {
+        let returnURL;
+        let returnImgURL;
+        try {
+
+
+            let req = await httpGet(url, data, task);
 
 
             if (task.iSgb2312 == true) {
                 req = iconv.decode(req, 'gb2312');
             }
 
-
             this.count++;
 
-
             let $ = cheerio.load(req);
-            let returnURL = Tool.getAllHref($, url, task, this.urlAll, this.urlNow);
+             returnURL = Tool.getAllHref($, url, task, this.urlAll, this.urlNow);
 
-            let returnImgURL = Tool.handleImagesUrl(this.url, $, task);
+             returnImgURL = Tool.handleImagesUrl(this.url, $, task);
 
-            // console.log(returnURL);
-            // console.log(returnImgURL);
+        } catch (error) {
+
+            returnURL = [0];
+            returnImgURL = [1];
+
+        }
 
 
-            return Promise.resolve([returnURL, returnImgURL]);
+        return [returnURL, returnImgURL];
 
-        }).catch((err) => {
-            this.log.error(err);
 
-            // this.urlNow.push(url);
-            return Promise.resolve([[0][1]]);
-        });
 
 
     }

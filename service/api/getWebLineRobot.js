@@ -52,8 +52,7 @@ class robot {
         return __awaiter(this, void 0, void 0, function* () {
             // let ddd =   this.test();
             //
-            // console.log(ddd);
-            // this.getUrl();
+            this.getUrl();
             this.getWeiboImgInit(0, 0);
             // this.getWeiboFollowInit(0);
         });
@@ -159,25 +158,31 @@ class robot {
             let idObj;
             let config = {};
             let data;
-            try {
-                config = { page: page, uid: configDb.uid, containerid: configDb.containerId };
-                data = yield req_1.httpGet('http://m.weibo.cn/container/getIndex', config, {});
-                data = JSON.parse(data);
-                let imgs = Tool.handleWeiBoImgs(data);
-                idObj = yield this.db.checkTtileIsSave(configDb.niceName);
-                if (!idObj) {
-                    idObj = yield this.db.addImgTitle(configDb.niceName, imgs[0]);
+            if (configDb) {
+                try {
+                    config = { page: page, uid: configDb.uid, containerid: configDb.containerId };
+                    data = yield req_1.httpGet(weiboRole_1.weiboUserDataApi, config, {});
+                    data = JSON.parse(data);
+                    let imgs = Tool.handleWeiBoImgs(data);
+                    idObj = yield this.db.checkTtileIsSave(configDb.niceName);
+                    if (!idObj) {
+                        idObj = yield this.db.addImgTitle(configDb.niceName, imgs[0]);
+                    }
+                    yield this.db.addWeiBoImgs(imgs, idObj['id']);
                 }
-                yield this.db.addWeiBoImgs(imgs, idObj['id']);
-            }
-            catch (error) {
-                console.warn(error.statusCode);
-                if (error.statusCode == 403) {
-                    yield this.setTimeout(120);
+                catch (error) {
+                    console.warn(error.statusCode);
+                    if (error.statusCode == 403) {
+                        yield this.setTimeout(120);
+                    }
                 }
+                page++;
             }
-            page++;
-            yield this.setTimeout(5);
+            else {
+                console.log('没有可用微博爬虫配置信息');
+                yield this.setTimeout(360);
+            }
+            yield this.setTimeout(3);
             // console.log(data);
             return { page: page, _data: data, offset: offset };
         });
@@ -201,14 +206,11 @@ class robot {
             // console.log(this.urlAll.length);
             // console.log('当前时间:', new Date());
             console.log('本次获取新地址数:', res.length);
-            if (res[0]) {
-            }
-            // console.log(res);
             if (res[1]) {
                 // console.log(res[1]);
                 if (res[1].title && res[1].list.length > 0) {
                     _this.db.checkImgDataAndInsert(res[1].list, res[1].title).then((res) => {
-                        console.log(res);
+                        // console.log(res);
                     });
                 }
             }
@@ -223,21 +225,24 @@ class robot {
         });
     }
     loopGetUrl(url, data, task) {
-        return req_1.httpGet(url, data, task).then((req) => {
-            if (task.iSgb2312 == true) {
-                req = iconv.decode(req, 'gb2312');
+        return __awaiter(this, void 0, void 0, function* () {
+            let returnURL;
+            let returnImgURL;
+            try {
+                let req = yield req_1.httpGet(url, data, task);
+                if (task.iSgb2312 == true) {
+                    req = iconv.decode(req, 'gb2312');
+                }
+                this.count++;
+                let $ = cheerio.load(req);
+                returnURL = Tool.getAllHref($, url, task, this.urlAll, this.urlNow);
+                returnImgURL = Tool.handleImagesUrl(this.url, $, task);
             }
-            this.count++;
-            let $ = cheerio.load(req);
-            let returnURL = Tool.getAllHref($, url, task, this.urlAll, this.urlNow);
-            let returnImgURL = Tool.handleImagesUrl(this.url, $, task);
-            // console.log(returnURL);
-            // console.log(returnImgURL);
-            return Promise.resolve([returnURL, returnImgURL]);
-        }).catch((err) => {
-            this.log.error(err);
-            // this.urlNow.push(url);
-            return Promise.resolve([[0][1]]);
+            catch (error) {
+                returnURL = [0];
+                returnImgURL = [1];
+            }
+            return [returnURL, returnImgURL];
         });
     }
 }

@@ -111,7 +111,7 @@ export function  forEachSpliceUrl(url:string,uris:string[]):string[]{
 }
 
 
-export function handleImagesUrl(url:string,$:any,configs:IConfigs){
+export function handleImagesUrl(url:string,$:any,configs:IConfigs):{list:string[],title:string}{
 
     let isOk = this.checkImagesKeyWordUrl(url,configs.imagesKeyWordUrl);
     let  imgs:string[] = [];
@@ -226,7 +226,7 @@ export function handleImgElement(obj:any,ele:string[],attr:string[],NotDownload:
     return tmps;
 }
 
-export function sortType(arr:string[],config:string){
+export function sortType(arr:string[],config:string):void{
     if(config=='desc'){
         arr.reverse();
     }else if(config=='asc'){
@@ -239,7 +239,7 @@ export function sortType(arr:string[],config:string){
 
 
 
-export function handleWeiBoImgs(req:Object):Object{
+export function handleWeiBoImgs(req:Object):string[]{
     let imgs:string[] =[];
 
 
@@ -263,7 +263,7 @@ export function handleWeiBoImgs(req:Object):Object{
     return imgs;
 }
 
-export function handleWeiBoFollows(req:Object):Object[]{
+export function handleWeiBoFollows(req:Object):{uid:number,screen_name:string}[]{
     let followList:any[] =[];
 
     if(req['cardlistInfo'].page){
@@ -293,7 +293,7 @@ export function handleWeiBoFollows(req:Object):Object[]{
 }
 
 
-export  function  getContainerId(res):string{
+export  function  getContainerId(res:{headers:Object}):string{
 
 
 

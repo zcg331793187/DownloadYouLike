@@ -3,7 +3,7 @@
  */
 
 
-import  {TitleDb,ImgDb,WeiboDb} from '../dbBase/SequelizeDb';
+import  {TitleDb, ImgDb, WeiboDb} from '../dbBase/SequelizeDb';
 // import * as Promise from 'bluebird';
 import * as log4 from 'log4js';
 
@@ -13,14 +13,35 @@ let util = require('util');
 // console.log(mysqlBase);
 
 
-interface IimgData{
-    url:string,
-    titleId:number
+interface IimgData {
+    url: string,
+    titleId: number
+}
+interface IaddImgsData {
+    titleId: number
+    url: string
 }
 
-export default  class mysql  {
+interface IinsertWeiBoFollowData {
+    uid: number
+    nickName: string
+    containerId: number
+}
+
+
+interface Imysql {
+    addImgData (titleId: number, url: string)
+    addImgTitle (title: string, imgThums: string)
+    checkTtileIsSave(title: string)
+    checkImgDataAndInsert(herfs: string[], title: string)
+    addImgs (herfs: string[], titleId: number)
+    addWeiBoImgs (imgs: string[], titleId: number)
+}
+
+export default  class mysql implements Imysql {
 
     log;
+
     constructor() {
 
 
@@ -28,31 +49,29 @@ export default  class mysql  {
     }
 
 
-    async addImgData (titleId:number, url:string){
+    async addImgData(titleId: number, url: string) {
 
 
-
-        await ImgDb.create({
-             'titleId': titleId,
-             'url': url
-         });
+        return await ImgDb.create({
+            'titleId': titleId,
+            'url': url
+        });
     }
 
 
-    async addImgTitle (title:string, imgThums:string){
+    async addImgTitle(title: string, imgThums: string) {
 
 
-
-              return  await TitleDb.create({
-                    'title': title,
-                    'imgThums': imgThums
-                });
+        return await TitleDb.create({
+            'title': title,
+            'imgThums': imgThums
+        });
 
     }
 
-    async checkTtileIsSave(title) {
+    async checkTtileIsSave(title: string) {
 
-     return   await TitleDb.findOne({
+        return await TitleDb.findOne({
             'where': {
                 'title': title
             }
@@ -60,87 +79,56 @@ export default  class mysql  {
     }
 
 
+    async  checkImgDataAndInsert(herfs: string[], title: string) {
 
-    checkImgDataAndInsert(herfs: string[],title:string) {
+        let response: any;
+        response = await TitleDb.findOne({'where': {'title': title}});
 
 
-
-        return TitleDb.findOne({
-            'where': {
-                'title': title
-            }
-        }).then((response:any)=>{
-
+        try {
             if (!response) {
 
                 // console.log('标题不存在');
-                this.addImgTitle(title,herfs[0]).then((res:any)=>{
+                response = await  this.addImgTitle(title, herfs[0]);
 
+                await  this.addImgs(herfs, response.id);//待测试
 
+            } else {
 
-                    this.addImgs(herfs,res.id);//待测试
-                }).catch((error)=>{
-                    console.warn(error);
-                })
-
-
-            }else{
-
-                this.addImgs(herfs,response.id);
-
-
+                await this.addImgs(herfs, response.id);
 
 
             }
+        } catch (err) {
+
+        }
 
 
-
-        });
-
-
-
-
-
+        return response;
 
 
     }
 
 
+    async  addImgs(herfs: string[], titleId: number) {
 
-        addImgs (herfs:string[],titleId:number){
+        let data: IaddImgsData[] = this.handleImgData(herfs, titleId);
 
-        let data:string[]  =   this.handleImgData(herfs,titleId);
+        for (let i in data) {
+            await this.addImgData(data[i].titleId, data[i].url);
+        }
 
+        return [];
 
-        // console.log('待处理图片资源：',data.length);
-        // let _this = this;
-            if(data.length>0){
-                data.forEach((item:any,index)=>{
-
-
-
-                    this.addImgData(item.titleId,item.url).then((res)=>{
-
-
-                        console.log('保存完成');
-
-                    }).catch((error)=>{
-                        console.log(error);
-                    });
-
-
-                });
-            }
 
     }
 
 
-    handleImgData(hrefs,title){
-        let  data = {};
-        hrefs.forEach((item,index)=>{
-              data = {url:item,titleId:title};
+    handleImgData(hrefs, title) {
+        let data = {};
+        hrefs.forEach((item, index) => {
+            data = {url: item, titleId: title};
             hrefs[index] = data;
-
 
 
         });
@@ -149,48 +137,43 @@ export default  class mysql  {
         return hrefs;
     }
 
-    async addWeiBoImgs (imgs,titleId:number) {
+    async addWeiBoImgs(imgs: string[], titleId: number) {
 
-        for( let i in imgs){
+        for (let i in imgs) {
 
             await  ImgDb.create({
-                'titleId': titleId, 'url': imgs[i]}).catch(error=>{
+                'titleId': titleId, 'url': imgs[i]
+            }).catch(error => {
                 // console.warn(error);
             })
         }
         return imgs;
 
 
+    }
+
+    async  getWeiBoFollow(offset: number) {
+
+
+        return await    WeiboDb.find({'attributes': ['id', 'containerId', 'niceName'], 'limit': 1, offset: offset});
+
 
     }
 
-  async  getWeiBoFollow(offset){
+
+    async insertWeiBoFollow(data: IinsertWeiBoFollowData[]) {
 
 
+        for (let i in data) {
 
-
-
-   let data =   await    WeiboDb.find({'attributes': ['id', 'containerId','niceName'],'limit': 1,offset:offset});
-
-
-   return data;
-    }
-
-
-   async insertWeiBoFollow (data:Object[]) {
-
-
-
-        for( let i in data){
-
-          await  WeiboDb.create({
-                'uid': data[i]['uid'], 'niceName': data[i]['nickName'], 'containerId':data[i]['containerId']}).catch(error=>{
-                    // console.warn(error);
-          })
+            await  WeiboDb.create({
+                'uid': data[i].uid, 'niceName': data[i].nickName, 'containerId': data[i].containerId
+            }).catch(error => {
+                // console.warn(error);
+            })
         }
-       return data;
+        return data;
     }
-
 
 
 }

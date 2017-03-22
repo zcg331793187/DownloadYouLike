@@ -20,7 +20,7 @@ class mysql {
     }
     addImgData(titleId, url) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield SequelizeDb_1.ImgDb.create({
+            return yield SequelizeDb_1.ImgDb.create({
                 'titleId': titleId,
                 'url': url
             });
@@ -44,37 +44,32 @@ class mysql {
         });
     }
     checkImgDataAndInsert(herfs, title) {
-        return SequelizeDb_1.TitleDb.findOne({
-            'where': {
-                'title': title
+        return __awaiter(this, void 0, void 0, function* () {
+            let response;
+            response = yield SequelizeDb_1.TitleDb.findOne({ 'where': { 'title': title } });
+            try {
+                if (!response) {
+                    // console.log('标题不存在');
+                    response = yield this.addImgTitle(title, herfs[0]);
+                    yield this.addImgs(herfs, response.id); //待测试
+                }
+                else {
+                    yield this.addImgs(herfs, response.id);
+                }
             }
-        }).then((response) => {
-            if (!response) {
-                // console.log('标题不存在');
-                this.addImgTitle(title, herfs[0]).then((res) => {
-                    this.addImgs(herfs, res.id); //待测试
-                }).catch((error) => {
-                    console.warn(error);
-                });
+            catch (err) {
             }
-            else {
-                this.addImgs(herfs, response.id);
-            }
+            return response;
         });
     }
     addImgs(herfs, titleId) {
-        let data = this.handleImgData(herfs, titleId);
-        // console.log('待处理图片资源：',data.length);
-        // let _this = this;
-        if (data.length > 0) {
-            data.forEach((item, index) => {
-                this.addImgData(item.titleId, item.url).then((res) => {
-                    console.log('保存完成');
-                }).catch((error) => {
-                    console.log(error);
-                });
-            });
-        }
+        return __awaiter(this, void 0, void 0, function* () {
+            let data = this.handleImgData(herfs, titleId);
+            for (let i in data) {
+                yield this.addImgData(data[i].titleId, data[i].url);
+            }
+            return [];
+        });
     }
     handleImgData(hrefs, title) {
         let data = {};
@@ -88,7 +83,8 @@ class mysql {
         return __awaiter(this, void 0, void 0, function* () {
             for (let i in imgs) {
                 yield SequelizeDb_1.ImgDb.create({
-                    'titleId': titleId, 'url': imgs[i] }).catch(error => {
+                    'titleId': titleId, 'url': imgs[i]
+                }).catch(error => {
                     // console.warn(error);
                 });
             }
@@ -97,15 +93,15 @@ class mysql {
     }
     getWeiBoFollow(offset) {
         return __awaiter(this, void 0, void 0, function* () {
-            let data = yield SequelizeDb_1.WeiboDb.find({ 'attributes': ['id', 'containerId', 'niceName'], 'limit': 1, offset: offset });
-            return data;
+            return yield SequelizeDb_1.WeiboDb.find({ 'attributes': ['id', 'containerId', 'niceName'], 'limit': 1, offset: offset });
         });
     }
     insertWeiBoFollow(data) {
         return __awaiter(this, void 0, void 0, function* () {
             for (let i in data) {
                 yield SequelizeDb_1.WeiboDb.create({
-                    'uid': data[i]['uid'], 'niceName': data[i]['nickName'], 'containerId': data[i]['containerId'] }).catch(error => {
+                    'uid': data[i].uid, 'niceName': data[i].nickName, 'containerId': data[i].containerId
+                }).catch(error => {
                     // console.warn(error);
                 });
             }
