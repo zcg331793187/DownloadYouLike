@@ -24,7 +24,7 @@ class robot {
     constructor() {
         this.urlAll = [];
         this.urlNow = [];
-        this.index = 0;
+        this.index = 11;
         this.count = 0;
         this.loop = 0;
         this.indexWb = 0;
@@ -53,7 +53,7 @@ class robot {
             // let ddd =   this.test();
             //
             this.getUrl();
-            this.getWeiboImgInit(0, 0);
+            // this.getWeiboImgInit(0, 0);
             // this.getWeiboFollowInit(0);
         });
     }
@@ -206,6 +206,7 @@ class robot {
             // console.log(this.urlAll.length);
             // console.log('当前时间:', new Date());
             console.log('本次获取新地址数:', res.length);
+            // console.log(res);
             if (res[1]) {
                 // console.log(res[1]);
                 if (res[1].title && res[1].list.length > 0) {

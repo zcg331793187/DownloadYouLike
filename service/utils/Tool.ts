@@ -119,8 +119,9 @@ export function handleImagesUrl(url:string,$:any,configs:IConfigs):{list:string[
     if(isOk){
      imgs =     this.handleImgElement($,configs.imagesInfoElement,configs.imagesAttr,configs.imagesNotDownload);
 
+     // console.log(imgs);
      this.forEachSpliceUrl(url,imgs);
-     title =     this.checkFolderNameElement($,configs.FolderNameElement,configs.FolderNamRegExp);
+     title =     this.checkFolderNameElement($,configs.FolderNameElement,configs.FolderNamRegExp,configs.FolderNameAttr);
     }
 
 
@@ -143,34 +144,64 @@ export function checkImagesKeyWordUrl (url:string,configs:Object):boolean{
 }
 
 
-export function checkFolderNameElement(obj:any,ele:string[],RegExp):string{
+export function checkFolderNameElement(obj:any,ele:string[],RegExp:RegExp,attr:string[]):string{
 
 
-    let temp:string;
-    for (let i in ele){
-        // obj(ele[i]).html();
-        temp = obj(ele[i]).text();
-        if(temp){
+
+    let temp:Object;
+    let tempString:string =null;
+
+
+
+    for (let  i in ele) {
+        temp = obj(ele[i]);
+        obj((ele[i])).each((id,eles)=>{
+            for ( let j in attr){
+                if(obj(eles).attr(attr[j])){
+
+                    tempString =   obj(eles).attr(attr[j]);
+                    break;
+
+                }
+            }
+
+
+        });
+
+    }
+
+
+
+
+
+
+    if (!tempString) {
+        tempString = temp['text']();
+    }
+
+
+
+
+        if(tempString){
 
             for( let j in RegExp){
 
-                temp = this.checkRegExp(temp,RegExp[j]);
+                tempString = this.checkRegExp(tempString,RegExp[j]);
 
             }
         }
-        if(temp){
-            console.log(temp);
-            break;
-        }
 
 
+
+
+
+
+    if(!tempString){
+        tempString = '未定义';
     }
-    if(!temp){
-        temp = '未定义';
-    }
 
 
-    return temp;
+    return tempString;
 }
 
 

@@ -75,8 +75,9 @@ function handleImagesUrl(url, $, configs) {
     let title;
     if (isOk) {
         imgs = this.handleImgElement($, configs.imagesInfoElement, configs.imagesAttr, configs.imagesNotDownload);
+        // console.log(imgs);
         this.forEachSpliceUrl(url, imgs);
-        title = this.checkFolderNameElement($, configs.FolderNameElement, configs.FolderNamRegExp);
+        title = this.checkFolderNameElement($, configs.FolderNameElement, configs.FolderNamRegExp, configs.FolderNameAttr);
     }
     return { list: imgs, title: title };
 }
@@ -92,25 +93,32 @@ function checkImagesKeyWordUrl(url, configs) {
     return re;
 }
 exports.checkImagesKeyWordUrl = checkImagesKeyWordUrl;
-function checkFolderNameElement(obj, ele, RegExp) {
+function checkFolderNameElement(obj, ele, RegExp, attr) {
     let temp;
+    let tempString = null;
     for (let i in ele) {
-        // obj(ele[i]).html();
-        temp = obj(ele[i]).text();
-        if (temp) {
-            for (let j in RegExp) {
-                temp = this.checkRegExp(temp, RegExp[j]);
+        temp = obj(ele[i]);
+        obj((ele[i])).each((id, eles) => {
+            for (let j in attr) {
+                if (obj(eles).attr(attr[j])) {
+                    tempString = obj(eles).attr(attr[j]);
+                    break;
+                }
             }
-        }
-        if (temp) {
-            console.log(temp);
-            break;
+        });
+    }
+    if (!tempString) {
+        tempString = temp['text']();
+    }
+    if (tempString) {
+        for (let j in RegExp) {
+            tempString = this.checkRegExp(tempString, RegExp[j]);
         }
     }
-    if (!temp) {
-        temp = '未定义';
+    if (!tempString) {
+        tempString = '未定义';
     }
-    return temp;
+    return tempString;
 }
 exports.checkFolderNameElement = checkFolderNameElement;
 function checkRegExp(str, exp) {

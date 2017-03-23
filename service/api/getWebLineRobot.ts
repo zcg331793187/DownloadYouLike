@@ -36,7 +36,7 @@ export class robot implements Irobot {
 
     urlAll: string[] = [];
     urlNow: string[] = [];
-    index: number = 0;
+    index: number = 11;
     count: number = 0;
     task: IConfigs;
     loop: number = 0;
@@ -91,7 +91,7 @@ export class robot implements Irobot {
 
         this.getUrl();
 
-        this.getWeiboImgInit(0, 0);
+        // this.getWeiboImgInit(0, 0);
         // this.getWeiboFollowInit(0);
 
     }
@@ -312,6 +312,7 @@ export class robot implements Irobot {
             console.log('本次获取新地址数:', res.length);
 
 
+            // console.log(res);
             if (res[1]) {
 
 
@@ -349,6 +350,7 @@ export class robot implements Irobot {
             let req = await httpGet(url, data, task);
 
 
+
             if (task.iSgb2312 == true) {
                 req = iconv.decode(req, 'gb2312');
             }
@@ -359,6 +361,7 @@ export class robot implements Irobot {
             returnURL = Tool.getAllHref($, url, task, this.urlAll, this.urlNow);
 
             returnImgURL = Tool.handleImagesUrl(this.url, $, task);
+
 
         } catch (error) {
 
