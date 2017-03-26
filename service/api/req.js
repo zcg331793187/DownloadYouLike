@@ -22,6 +22,12 @@ function processOptions(method, option, data, config) {
     if (config.iSgb2312 == true) {
         option.encoding = null;
     }
+    else if (config.iSEncoding == true) {
+        option.encoding = null;
+    }
+    else if (config.iSGzip == true) {
+        option.encoding = null;
+    }
     if (config.headers) {
         option.headers = config.headers;
     }

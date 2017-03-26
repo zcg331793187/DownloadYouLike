@@ -24,11 +24,9 @@ class robot {
     constructor() {
         this.urlAll = [];
         this.urlNow = [];
-        this.index = 11;
+        this.index = 19;
         this.count = 0;
         this.loop = 0;
-        this.indexWb = 0;
-        this.indexFollow = 0;
         this.db = new mysql_1.default();
         log4.configure(log4_1.log4Config);
         this.log = log4.getLogger();
@@ -53,8 +51,8 @@ class robot {
             // let ddd =   this.test();
             //
             this.getUrl();
-            // this.getWeiboImgInit(0, 0);
             // this.getWeiboFollowInit(0);
+            // this.getWeiboImgInit(0, 0);
         });
     }
     handelAuto() {
@@ -73,18 +71,20 @@ class robot {
     }
     getWeiboFollowInit(page) {
         this.getWeiboFollowList(page).then(res => {
-            if (res['_data']['count']) {
-                this.getWeiboFollowInit(res.config.page);
-            }
-            else {
-                console.log('end');
-            }
+            console.log('关注列表，第' + res.config.page + '页');
+            this.getWeiboFollowInit(res.config.page);
         });
     }
     getWeiboImgInit(page, offset) {
         this.getWeiboUrl(page, offset).then(res => {
-            if (res['_data']['cardlistInfo']['page']) {
-                this.getWeiboImgInit(res.page, offset);
+            if (res['_data']) {
+                if (res['_data']['cardlistInfo']['page']) {
+                    this.getWeiboImgInit(res.page, offset);
+                }
+                else {
+                    offset++;
+                    this.getWeiboImgInit(0, offset);
+                }
             }
             else {
                 offset++;
@@ -94,8 +94,7 @@ class robot {
     }
     getWeiboFollowList(page) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log(page);
-            let config = weiboRole_1.followListConfig[this.indexFollow];
+            let config = weiboRole_1.followListConfig[0];
             let _data = [];
             let okData;
             let option = {};
@@ -113,13 +112,20 @@ class robot {
                 catch (err) {
                     console.warn(err.statusCode);
                     if (err.statusCode == 403) {
-                        yield this.setTimeout(120);
+                        console.log('-------------------用户关注列表请求频繁------------------');
+                        yield this.setTimeout(Math.ceil(Math.random() * 120));
                     }
                 }
+            }
+            yield this.setTimeout(Math.ceil(Math.random() * 10));
+            console.log('走');
+            if (_data['count']) {
                 config.page++;
             }
-            yield this.setTimeout(5);
-            console.log('走');
+            else {
+                config.page = 0;
+                console.log('end');
+            }
             return { config: config, _data: _data };
         });
     }
@@ -148,12 +154,14 @@ class robot {
                 temp = yield req_1.httpGet(weiboRole_1.weiboUserDataApi, { uid: i.uid, containerid: i.containerId }, {});
                 temp = JSON.parse(temp);
                 i.containerId = temp['tabsInfo']['tabs'][1]['containerid'];
+                yield this.setTimeout(10);
             }
             return data;
         });
     }
     getWeiboUrl(page, offset) {
         return __awaiter(this, void 0, void 0, function* () {
+            // await this.setTimeout(40);
             let configDb = yield this.db.getWeiBoFollow(offset);
             let idObj;
             let config = {};
@@ -168,21 +176,25 @@ class robot {
                     if (!idObj) {
                         idObj = yield this.db.addImgTitle(configDb.niceName, imgs[0]);
                     }
+                    console.log('用户微博:', configDb.niceName, '。第' + page + '页', '当前页面图片数:', imgs.length);
                     yield this.db.addWeiBoImgs(imgs, idObj.id);
                 }
                 catch (error) {
                     console.warn(error.statusCode);
                     if (error.statusCode == 403) {
-                        yield this.setTimeout(120);
+                        console.log('-------------------用户微博请求频繁------------------');
+                        yield this.setTimeout(Math.ceil(Math.random() * 120));
                     }
                 }
                 page++;
             }
             else {
                 console.log('没有可用微博爬虫配置信息');
-                yield this.setTimeout(360);
+                // await this.setTimeout(360);
+                // await this.setTimeout(Math.ceil(Math.random()*360));
+                offset = 0;
             }
-            yield this.setTimeout(3);
+            yield this.setTimeout(Math.ceil(Math.random() * 10));
             // console.log(data);
             return { page: page, _data: data, offset: offset };
         });
@@ -203,8 +215,6 @@ class robot {
         }
         console.log('进行地址：', _this.url);
         _this.loopGetUrl(_this.url, {}, _this.task).then((res) => {
-            // console.log(this.urlAll.length);
-            // console.log('当前时间:', new Date());
             console.log('本次获取新地址数:', res.length);
             // console.log(res);
             if (res[1]) {
@@ -231,6 +241,10 @@ class robot {
             let returnImgURL;
             try {
                 let req = yield req_1.httpGet(url, data, task);
+                if (task.iSGzip == true) {
+                    req = yield Tool.unzlip(req);
+                    req = iconv.decode(req, 'utf-8');
+                }
                 if (task.iSgb2312 == true) {
                     req = iconv.decode(req, 'gb2312');
                 }
@@ -240,6 +254,7 @@ class robot {
                 returnImgURL = Tool.handleImagesUrl(this.url, $, task);
             }
             catch (error) {
+                console.log(error);
                 returnURL = [0];
                 returnImgURL = [1];
             }

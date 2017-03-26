@@ -16,6 +16,8 @@ export interface IRequestOption{
     json?:boolean,
     encoding?:string,
     iSgb2312?:boolean,
+    iSEncoding?:boolean,
+    iSGzip?:boolean,
     resolveWithFullResponse?:boolean
 }
 
@@ -46,9 +48,17 @@ function  processOptions(method:MethodEnum,option:IRequestOption,data:Object,con
 
     }
 
+
+
     if(config.iSgb2312==true){
+        option.encoding = null
+    }else if(config.iSEncoding==true) {
+        option.encoding = null;
+    } else if(config.iSGzip==true){
         option.encoding = null;
     }
+
+
     if(config.headers){
         option.headers = config.headers
     }

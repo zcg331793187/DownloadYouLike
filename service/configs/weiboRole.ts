@@ -4,16 +4,22 @@
 
 interface Iweibo{
     containerid:string
-    jumpfrom:string
-    page:number
+    jumpfrom?:string
+    page:number,
+    header?:Object
+    type?:string
+    value?:string
 }
 
 
 
-export const followListAPi:string = "http://m.weibo.cn/container/getSecond";
-
+export const followListAPi:string =
+    "http://m.weibo.cn/container/getSecond";
 export const followListConfig:Iweibo[]= [
-    {containerid:'1005052448582352_-_FOLLOWERS',jumpfrom:'weibocom',page:0}
+    {
+        containerid:'1005052448582352_-_FOLLOWERS',page:0,
+        type:'uid',value:'3980836894'
+    }
 ];
 
 export const weiboUserDataApi:string = 'http://m.weibo.cn/container/getIndex';

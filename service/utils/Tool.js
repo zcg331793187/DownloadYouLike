@@ -2,6 +2,15 @@
  * Created by zhoucaiguang on 2017/3/8.
  */
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator.throw(value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments)).next());
+    });
+};
+const zlib = require('zlib');
 let url = require('url'); //解析操作url
 function checkUrl(url, config, urlAll) {
     let re = true;
@@ -19,9 +28,12 @@ function checkUrl(url, config, urlAll) {
     if (re) {
         for (let j in config.likeKeyWord) {
             try {
-                if (url.indexOf(config.likeKeyWord[j]) == -1) {
-                    re = false;
+                if (url.indexOf(config.likeKeyWord[j]) > -1) {
+                    re = true;
                     break;
+                }
+                else {
+                    re = false;
                 }
             }
             catch (e) {
@@ -198,3 +210,16 @@ function getContainerId(res) {
     return decodeURIComponent(res.headers['set-cookie'][2]).match(/fid=+[0-9]+/i)[0].replace(/fid=/, '');
 }
 exports.getContainerId = getContainerId;
+function unzlip(data) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return yield zlipPromise(data);
+    });
+}
+exports.unzlip = unzlip;
+const zlipPromise = (data) => {
+    return new Promise((resolve, reject) => {
+        zlib.gunzip(data, function (err, dezipped) {
+            resolve(dezipped);
+        });
+    });
+};

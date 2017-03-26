@@ -3,7 +3,7 @@
  */
 
 import {IConfigs} from '../configs/role';
-import {fn} from "sequelize";
+import * as  zlib from 'zlib';
 
 
 
@@ -30,9 +30,11 @@ export function checkUrl(url:string,config:IConfigs,urlAll:string[]):boolean{
     if(re){
         for(let j in config.likeKeyWord){
             try{
-                if(url.indexOf(config.likeKeyWord[j])==-1){
-                    re = false;
+                if(url.indexOf(config.likeKeyWord[j])>-1){
+                    re = true;
                     break;
+                }else{
+                    re = false;
                 }
             }catch (e){
                 console.log('checkUlr'+e);
@@ -80,6 +82,7 @@ export function getAllHref($:any,_thisUrl:string,configs:IConfigs,urlAll:string[
         if(ele.attribs.href){
       let path:string =   this.spliceUrl(_thisUrl,ele.attribs.href);
       let isOk:boolean  =  this.checkUrl(path,configs,urlAll);
+
       if(isOk){
           urlAll.push(path);
           urlNow.push(path);
@@ -331,3 +334,22 @@ export  function  getContainerId(res:{headers:Object}):string{
     return decodeURIComponent(res.headers['set-cookie'][2]).match(/fid=+[0-9]+/i)[0].replace(/fid=/,'');
 
 }
+
+
+export async function unzlip(data){
+
+   return  await  zlipPromise(data);
+}
+
+
+const zlipPromise = (data) => {
+
+    return new Promise((resolve, reject) => {
+        zlib.gunzip(data, function (err, dezipped) {
+
+            resolve(dezipped);
+
+
+        });
+    });
+};

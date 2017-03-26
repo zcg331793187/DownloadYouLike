@@ -12,6 +12,7 @@ import mysql from '../dbBase/mysql';
 import * as log4 from 'log4js';
 import {log4Config} from '../configs/log4';
 let iconv = require('iconv-lite');
+import * as  zlip from 'zlib';
 
 interface ICotainerId {
 
@@ -36,12 +37,10 @@ export class robot implements Irobot {
 
     urlAll: string[] = [];
     urlNow: string[] = [];
-    index: number = 11;
+    index: number = 19;
     count: number = 0;
     task: IConfigs;
     loop: number = 0;
-    indexWb: number = 0;
-    indexFollow: number = 0;
     url: string;
     db;
     log;
@@ -91,8 +90,9 @@ export class robot implements Irobot {
 
         this.getUrl();
 
-        // this.getWeiboImgInit(0, 0);
+
         // this.getWeiboFollowInit(0);
+        // this.getWeiboImgInit(0, 0);
 
     }
 
@@ -119,12 +119,8 @@ export class robot implements Irobot {
 
 
         this.getWeiboFollowList(page).then(res => {
-
-            if (res['_data']['count']) {
-                this.getWeiboFollowInit(res.config.page);
-            } else {
-                console.log('end');
-            }
+                console.log('关注列表，第'+res.config.page+'页');
+            this.getWeiboFollowInit(res.config.page);
 
         });
 
@@ -136,8 +132,13 @@ export class robot implements Irobot {
 
         this.getWeiboUrl(page, offset).then(res => {
 
-            if (res['_data']['cardlistInfo']['page']) {
-                this.getWeiboImgInit(res.page, offset);
+            if (res['_data']) {
+                if(res['_data']['cardlistInfo']['page']){
+                    this.getWeiboImgInit(res.page, offset);
+                }else{
+                    offset++;
+                    this.getWeiboImgInit(0, offset);
+                }
             } else {
                 offset++;
                 this.getWeiboImgInit(0, offset);
@@ -153,8 +154,7 @@ export class robot implements Irobot {
 
     async getWeiboFollowList(page: number) {
 
-        console.log(page);
-        let config: any = followListConfig[this.indexFollow];
+        let config: any = followListConfig[0];
         let _data = [];
         let okData;
         let option: any = {};
@@ -181,17 +181,26 @@ export class robot implements Irobot {
             } catch (err) {
                 console.warn(err.statusCode);
                 if (err.statusCode == 403) {
-                    await this.setTimeout(120);
+                    console.log('-------------------用户关注列表请求频繁------------------');
+
+                    await this.setTimeout(Math.ceil(Math.random()*120));
                 }
 
             }
 
-            config.page++;
+
         }
 
-
-        await this.setTimeout(5);
+        await this.setTimeout(Math.ceil(Math.random()*10));
         console.log('走');
+        if (_data['count']) {
+            config.page++;
+        }
+        else {
+            config.page=0;
+            console.log('end');
+        }
+
 
         return {config: config, _data: _data};
     }
@@ -228,9 +237,10 @@ export class robot implements Irobot {
 
             temp = await httpGet(weiboUserDataApi, {uid: i.uid, containerid: i.containerId}, {});
 
+
             temp = JSON.parse(temp);
             i.containerId = temp['tabsInfo']['tabs'][1]['containerid'];
-
+            await this.setTimeout(10);
         }
 
 
@@ -238,7 +248,7 @@ export class robot implements Irobot {
     }
 
     async  getWeiboUrl(page, offset) {
-
+        // await this.setTimeout(40);
 
         let configDb = await  this.db.getWeiBoFollow(offset);
         let idObj: {id:number};
@@ -260,13 +270,15 @@ export class robot implements Irobot {
                 if (!idObj) {
                     idObj = await    this.db.addImgTitle(configDb.niceName, imgs[0]);
                 }
-
+                console.log('用户微博:',configDb.niceName,'。第'+page+'页','当前页面图片数:',imgs.length);
                 await this.db.addWeiBoImgs(imgs, idObj.id);
 
             } catch (error) {
                 console.warn(error.statusCode);
                 if (error.statusCode == 403) {
-                    await this.setTimeout(120);
+                    console.log('-------------------用户微博请求频繁------------------');
+
+                    await this.setTimeout(Math.ceil(Math.random()*120));
                 }
             }
 
@@ -274,9 +286,11 @@ export class robot implements Irobot {
             page++;
         } else {
             console.log('没有可用微博爬虫配置信息');
-            await this.setTimeout(360);
+            // await this.setTimeout(360);
+            // await this.setTimeout(Math.ceil(Math.random()*360));
+            offset=0;
         }
-        await this.setTimeout(3);
+        await this.setTimeout(Math.ceil(Math.random()*10));
         // console.log(data);
 
         return {page: page, _data: data, offset: offset};
@@ -307,8 +321,7 @@ export class robot implements Irobot {
         console.log('进行地址：', _this.url);
 
         _this.loopGetUrl(_this.url, {}, _this.task).then((res: any) => {
-            // console.log(this.urlAll.length);
-            // console.log('当前时间:', new Date());
+
             console.log('本次获取新地址数:', res.length);
 
 
@@ -350,6 +363,10 @@ export class robot implements Irobot {
             let req = await httpGet(url, data, task);
 
 
+            if(task.iSGzip==true){
+                req = await Tool.unzlip(req);
+                req= iconv.decode(req, 'utf-8');
+            }
 
             if (task.iSgb2312 == true) {
                 req = iconv.decode(req, 'gb2312');
@@ -360,11 +377,13 @@ export class robot implements Irobot {
             let $ = cheerio.load(req);
             returnURL = Tool.getAllHref($, url, task, this.urlAll, this.urlNow);
 
+
             returnImgURL = Tool.handleImagesUrl(this.url, $, task);
 
 
         } catch (error) {
 
+            console.log(error);
             returnURL = [0];
             returnImgURL = [1];
 
