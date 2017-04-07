@@ -18,6 +18,7 @@ export  interface IConfigs{
     autoLoop:boolean,
     FolderNameAttr?:string[]
     iSGzip?:boolean,
+    urlType?:string
 
 }
 
@@ -63,7 +64,7 @@ export const configs = [
         headers:{Referer:''},//未重写
         iSgb2312:false,//未重写
         FolderNameElement:['div.inline'],//jq获取标题名元素  思考怎么用数组来搜索多个标题名,匹配到就不匹配后面的元素
-        FolderNamRegExp:[/\s/g,/\//g],
+        FolderNamRegExp:["/\s/g","/\//g"],
         timeout:4000,//请求超时
         urlTimeout:4000,//请求超时
         imgTimeout:5000,//请求超时
@@ -90,7 +91,7 @@ export const configs = [
         headers:{Referer:''},//未重写
         iSgb2312:false,//未重写
         FolderNameElement:['title'],//jq获取标题名元素  思考怎么用数组来搜索多个标题名,匹配到就不匹配后面的元素
-        FolderNamRegExp:[/\s/g,/\//g,/XiuRen.org/g,/秀人网$/],
+        FolderNamRegExp:["/\s/g,/\//g","/XiuRen.org/g","/秀人网$/"],
         timeout:4000,//请求超时
         urlTimeout:4000,//请求超时
         imgTimeout:5000,//请求超时
@@ -142,7 +143,7 @@ export const configs = [
         headers:{Referer:''},//未重写
         iSgb2312:false,//未重写
         FolderNameElement:['.header-right h3'],//jq获取标题名元素  思考怎么用数组来搜索多个标题名,匹配到就不匹配后面的元素
-        FolderNamRegExp:[/\s/g,/\//g],
+        FolderNamRegExp:["/\s/g","/\//g"],
         timeout:4000,//请求超时
         urlTimeout:4000,//请求超时
         imgTimeout:5000,//请求超时
@@ -168,7 +169,7 @@ export const configs = [
         headers:{Referer:''},//未重写
         iSgb2312:false,//未重写
         FolderNameElement:['title'],//jq获取标题名元素  思考怎么用数组来搜索多个标题名,匹配到就不匹配后面的元素
-        FolderNamRegExp:[/\s/g,/\//g],
+        FolderNamRegExp:["/\s/g","/\//g"],
         timeout:4000,//请求超时
         urlTimeout:4000,//请求超时
         imgTimeout:5000,//请求超时
@@ -194,7 +195,7 @@ export const configs = [
         headers:{Referer:''},//未重写
         iSgb2312:false,//未重写
         FolderNameElement:['.title h2'],//jq获取标题名元素  思考怎么用数组来搜索多个标题名,匹配到就不匹配后面的元素
-        FolderNamRegExp:[/\s/g,/\//g],
+        FolderNamRegExp:["/\s/g","/\//g"],
         timeout:4000,//请求超时
         urlTimeout:4000,//请求超时
         imgTimeout:5000,//请求超时
@@ -220,7 +221,7 @@ export const configs = [
         headers:{Referer:''},//未重写
         iSgb2312:true,//未重写
         FolderNameElement:['.title h1'],//jq获取标题名元素  思考怎么用数组来搜索多个标题名,匹配到就不匹配后面的元素
-        FolderNamRegExp:[/\s/g,/\//g],
+        FolderNamRegExp:["/\s/g","/\//g"],
         timeout:4000,//请求超时
         urlTimeout:4000,//请求超时
         imgTimeout:5000,//请求超时
@@ -246,7 +247,7 @@ export const configs = [
         headers:{Referer:''},//未重写
         iSgb2312:false,//未重写
         FolderNameElement:['.entry-title'],//jq获取标题名元素  思考怎么用数组来搜索多个标题名,匹配到就不匹配后面的元素
-        FolderNamRegExp:[/\s/g,/\//g],
+        FolderNamRegExp:["/\s/g","/\//g"],
         timeout:4000,//请求超时
         urlTimeout:4000,//请求超时
         imgTimeout:5000,//请求超时
@@ -554,7 +555,7 @@ export const configs = [
         autoLoop : true,//遍历所有url后重新webRoot请求
     },
     {
-        url:'http://bcy.net/coser',
+        url:'http://bcy.net',
         isSort:true,//是否对url进行排序
         base64:false,
         sortType:'asc',//是否对url进行排序 desc 倒序 asc正序
@@ -564,19 +565,7 @@ export const configs = [
         imagesType:['jpg'],
         imagesNotDownload:['logo.png'],
         isReturnDownload:false,
-        headers: {
-            Host: 'bcy.net',
-            Connection: 'keep-alive',
-            'Cache-Control': 'max-age=0',
-            'Upgrade-Insecure-Requests': 1,
-            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36',
-            Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-            DNT: 1,
-            Referer: "http://bcy.net/coser",
-            'Accept-Encoding': "gzip, deflate, sdch",
-            'Accept-Language': "zh-CN,zh;q=0.8",
-            Cookie: "acw_tc=AQAAAFkUAn9CQQQAy8A2t0ryCX7tp5tO; PHPSESSID=3ctpoa25hd88e71c3nvfmejkr0; lang_set=zh; UM_distinctid=15b0601964e3ac-06ca498a41e063-1d3a6853-fa000-15b0601964f9a1; LOGGED_USER=Nn%2Flq9WmWx79eHT71Uf2byw%3D%3Ad2NnyjF654Y2u5RqI81PCA%3D%3D; mobile_set=no; CNZZDATA1257708097=1014489182-1490452282-null%7C1490534094; Hm_lvt_330d168f9714e3aa16c5661e62c00232=1490454419; Hm_lpvt_330d168f9714e3aa16c5661e62c00232=1490538074",
-        },//未重写
+        headers: {Host:'bcy.net',Connection:'keep-alive','Cache-Control':'max-age=0','Upgrade-Insecure-Requests':1,'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36',Accept:'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',DNT:1,Referer:"http://bcy.net/coser",'Accept-Encoding':"gzip,deflate,sdch",'Accept-Language':"zh-CN,zh;q=0.8",Cookie:"acw_tc=AQAAAFkUAn9CQQQAy8A2t0ryCX7tp5tO; PHPSESSID=3ctpoa25hd88e71c3nvfmejkr0; lang_set=zh; UM_distinctid=15b0601964e3ac-06ca498a41e063-1d3a6853-fa000-15b0601964f9a1; LOGGED_USER=Nn%2Flq9WmWx79eHT71Uf2byw%3D%3Ad2NnyjF654Y2u5RqI81PCA%3D%3D; mobile_set=no; CNZZDATA1257708097=1014489182-1490452282-null%7C1490534094; Hm_lvt_330d168f9714e3aa16c5661e62c00232=1490454419; Hm_lpvt_330d168f9714e3aa16c5661e62c00232=1490538074"},//未重写
         iSgb2312:false,//未重写
         FolderNameElement:['.js-post-title'],//jq获取标题名元素  思考怎么用数组来搜索多个标题名,匹配到就不匹配后面的元素
         FolderNameAttr:['text'],//jq获取标题名元素  思考怎么用数组来搜索多个标题名,匹配到就不匹配后面的元素
@@ -588,10 +577,40 @@ export const configs = [
         urlElement:['a'],
         urlAttr:['href'],
         likeKeyWord:['coser','expo'],
-        notLikeKeyWord: ['#', 'javascript','novel','illust'],
+        notLikeKeyWord: ['#', 'javascript','novel','illust','tags','.apk','static','p='],
         autoNext : false,//是否请求完所有url后执行下一个配置项
         autoLoop : true,//遍历所有url后重新webRoot请求
         iSGzip : true,//经过gzip压缩需要解压
+        urlType : true,//
+    },
+    {
+        url:'http://www.zrmm.com',
+        isSort:true,//是否对url进行排序
+        base64:false,
+        sortType:'asc',//是否对url进行排序 desc 倒序 asc正序
+        imagesInfoElement:['#picture img'], //jq获取图片元素
+        imagesKeyWordUrl:['article'],//图片页面的url关键词
+        imagesAttr:['src'],// 完成
+        imagesType:['jpg'],
+        imagesNotDownload:['logo.png'],
+        isReturnDownload:false,
+        headers: {},//未重写
+        iSgb2312:false,//未重写
+        FolderNameElement:['.metaRight h2 a'],//jq获取标题名元素  思考怎么用数组来搜索多个标题名,匹配到就不匹配后面的元素
+        FolderNameAttr:['text'],//jq获取标题名元素  思考怎么用数组来搜索多个标题名,匹配到就不匹配后面的元素
+        FolderNamRegExp:[/\s/g,/\//g],
+        timeout:4000,//请求超时
+        urlTimeout:4000,//请求超时
+        imgTimeout:5000,//请求超时
+        isResetDownImage:false,
+        urlElement:['a'],
+        urlAttr:['href'],
+        likeKeyWord:['zrmm'],
+        notLikeKeyWord: ['#', 'javascript','xml'],
+        autoNext : false,//是否请求完所有url后执行下一个配置项
+        autoLoop : true,//遍历所有url后重新webRoot请求
+        iSGzip : false,//经过gzip压缩需要解压
+        urlType : true,//
     }
 
 

@@ -92,4 +92,32 @@ let WeiboDb = sequelize.define('title', {
     'timestamps': false,
 });
 
-export {TitleDb,ImgDb,WeiboDb}
+let ConfigDb = sequelize.define('config', {
+    'id': {
+        'primaryKey':true,
+        'type': Sequelize.INTEGER,
+        'allowNull': true,
+        'unique': false // 字段是否UNIQUE
+    },
+    'webName': {
+        'type': Sequelize.STRING(255),
+        'allowNull': true//是否可以为空
+    },
+    'isUse': {
+        'type': Sequelize.STRING(255),
+        'allowNull': true
+    },
+    'config': {
+        'type': Sequelize.STRING(255),
+        'allowNull': true
+    }
+}, {
+    // 自定义表名
+    'freezeTableName': true,
+    'tableName': 'node_configs',
+    // 是否需要增加createdAt、updatedAt、deletedAt字段
+    'timestamps': false,
+});
+
+
+export {TitleDb,ImgDb,WeiboDb,ConfigDb}

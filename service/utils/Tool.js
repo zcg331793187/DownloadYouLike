@@ -46,8 +46,6 @@ function checkUrl(url, config, urlAll) {
 exports.checkUrl = checkUrl;
 function spliceUrl(host, uri) {
     let href = null;
-    // console.log(host);
-    // console.log(uri);
     try {
         href = url.resolve(host, uri);
     }
@@ -223,3 +221,15 @@ const zlipPromise = (data) => {
         });
     });
 };
+function checkHttpUrl(urlString) {
+    if (urlString != "") {
+        let reg = /(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&:/~\+#]*[\w\-\@?^=%&/~\+#])?/;
+        if (!reg.test(urlString)) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+}
+exports.checkHttpUrl = checkHttpUrl;

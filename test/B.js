@@ -13,5 +13,10 @@ class ZipCodeValidatowwr extends A_1.ZipCodeValidator {
 }
 let ww = new ZipCodeValidatowwr();
 // console.log(ww);
-var href = url.resolve('http://www.rosmm.com/rosimm/2017/02/21/2156.htm', '2156_2.htm');
-console.log(href);
+let route = ['mysql', 'mysql', 'mysql'];
+route.map(item => console.log(require(item)));
+console.log(route);
+// var href = url.resolve('http://www.rosmm.com/rosimm/2017/02/21/2156.htm', '2156_2.htm');
+// console.log(href);
+let newArray = [1, 2, 3, 4].map(num => num += 1);
+console.log(newArray);

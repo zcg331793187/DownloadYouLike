@@ -27,7 +27,7 @@ interface Irobot {
     getWeiboFollowList(page: number): void
     getWeiboImgInit(page: number, offset: number)
     setTimeout(m: number)
-    getWeiboUserContainerId(data:ICotainerId[])
+    getWeiboUserContainerId(data: ICotainerId[])
     getWeiboMobileContainerId(data: ICotainerId[])
     getWeiboUrl(page: number, offset: number): Object
 }
@@ -37,7 +37,7 @@ export class robot implements Irobot {
 
     urlAll: string[] = [];
     urlNow: string[] = [];
-    index: number = 19;
+    index: number = 0;
     count: number = 0;
     task: IConfigs;
     loop: number = 0;
@@ -80,7 +80,7 @@ export class robot implements Irobot {
 
     }
 
-    async init() {
+     init() {
 
 
 
@@ -88,38 +88,46 @@ export class robot implements Irobot {
         //
 
 
-        this.getUrl();
+         this.getUrlInit();
 
+        // await this.db.getConfigs(this.index);
+
+        // this.handelAuto();
 
         // this.getWeiboFollowInit(0);
         // this.getWeiboImgInit(0, 0);
 
     }
 
-    handelAuto() {
 
-        let task = configs[this.index];
-        if (!task) {
-            this.index = 0;
-            return this.handelAuto();
+    getUrlInit(){
+
+        this.getUrl().then(res=>{
+
+
+            this.getUrlInit();
+        });
+
+    }
+
+    async handelAuto() {
+
+
+    let configs =     await this.db.getConfigs(this.index);
+        if(!configs){
+            this.index =0;
         }
 
-        if (task['autoLoop'] == true) {
-            this.index++;
-            console.log(task.url);
-            return task;
-        }
-        this.index++;
 
 
-        return this.handelAuto();
+        return configs;
     }
 
     getWeiboFollowInit(page: number) {
 
 
         this.getWeiboFollowList(page).then(res => {
-                console.log('关注列表，第'+res.config.page+'页');
+            console.log('关注列表，第' + res.config.page + '页');
             this.getWeiboFollowInit(res.config.page);
 
         });
@@ -133,9 +141,9 @@ export class robot implements Irobot {
         this.getWeiboUrl(page, offset).then(res => {
 
             if (res['_data']) {
-                if(res['_data']['cardlistInfo']['page']){
+                if (res['_data']['cardlistInfo']['page']) {
                     this.getWeiboImgInit(res.page, offset);
-                }else{
+                } else {
                     offset++;
                     this.getWeiboImgInit(0, offset);
                 }
@@ -183,7 +191,7 @@ export class robot implements Irobot {
                 if (err.statusCode == 403) {
                     console.log('-------------------用户关注列表请求频繁------------------');
 
-                    await this.setTimeout(Math.ceil(Math.random()*120));
+                    await this.setTimeout(Math.ceil(Math.random() * 120));
                 }
 
             }
@@ -191,13 +199,13 @@ export class robot implements Irobot {
 
         }
 
-        await this.setTimeout(Math.ceil(Math.random()*10));
+        await this.setTimeout(Math.ceil(Math.random() * 10));
         console.log('走');
         if (_data['count']) {
             config.page++;
         }
         else {
-            config.page=0;
+            config.page = 0;
             console.log('end');
         }
 
@@ -251,7 +259,7 @@ export class robot implements Irobot {
         // await this.setTimeout(40);
 
         let configDb = await  this.db.getWeiBoFollow(offset);
-        let idObj: {id:number};
+        let idObj: {id: number};
         let config: Object = {};
         let data;
 
@@ -270,7 +278,7 @@ export class robot implements Irobot {
                 if (!idObj) {
                     idObj = await    this.db.addImgTitle(configDb.niceName, imgs[0]);
                 }
-                console.log('用户微博:',configDb.niceName,'。第'+page+'页','当前页面图片数:',imgs.length);
+                console.log('用户微博:', configDb.niceName, '。第' + page + '页', '当前页面图片数:', imgs.length);
                 await this.db.addWeiBoImgs(imgs, idObj.id);
 
             } catch (error) {
@@ -278,7 +286,7 @@ export class robot implements Irobot {
                 if (error.statusCode == 403) {
                     console.log('-------------------用户微博请求频繁------------------');
 
-                    await this.setTimeout(Math.ceil(Math.random()*120));
+                    await this.setTimeout(Math.ceil(Math.random() * 120));
                 }
             }
 
@@ -288,68 +296,66 @@ export class robot implements Irobot {
             console.log('没有可用微博爬虫配置信息');
             // await this.setTimeout(360);
             // await this.setTimeout(Math.ceil(Math.random()*360));
-            offset=0;
+            offset = 0;
         }
-        await this.setTimeout(Math.ceil(Math.random()*10));
+        await this.setTimeout(Math.ceil(Math.random() * 10));
         // console.log(data);
 
         return {page: page, _data: data, offset: offset};
     }
 
 
-    getUrl() {
+    async getUrl() {
 
 
-        let _this = this;
 
 
-        if (_this.urlNow.length == 0) {
-            _this.urlAll = [];
-            _this.urlNow = [];
-            _this.count = 0;
-            _this.task = _this.handelAuto();
-            _this.url = _this.task.url;
-            _this.loop++;
+
+
+        if (this.urlNow.length == 0) {
+            this.urlAll = [];
+            this.urlNow = [];
+            this.count = 0;
+
+            this.task = await this.handelAuto();
+            if(!this.task){
+                this.task = await this.handelAuto();
+            }
+            this.url = this.task.url;
+            this.index++;
+            this.loop++;
 
 
         } else {
-            Tool.sortType(_this.urlNow, _this.task.sortType);
+            Tool.sortType(this.urlNow, this.task.sortType);
 
-            _this.url = _this.urlNow.shift();
+            this.url = this.urlNow.shift();
         }
 
-        console.log('进行地址：', _this.url);
+        console.log('进行地址：', this.url);
 
-        _this.loopGetUrl(_this.url, {}, _this.task).then((res: any) => {
-
-            console.log('本次获取新地址数:', res.length);
+        let data = await  this.loopGetUrl(this.url, {}, this.task);
 
 
-            // console.log(res);
-            if (res[1]) {
+
+        if (data[1]) {
 
 
-                // console.log(res[1]);
-                if (res[1].title && res[1].list.length > 0) {
-                    _this.db.checkImgDataAndInsert(res[1].list, res[1].title).then((res) => {
-                        // console.log(res);
-                    });
-                }
+            // console.log(res[1]);
+            if (data[1].title && data[1].list.length > 0) {
+                await   this.db.checkImgDataAndInsert(data[1].list, data[1].title);
             }
+        }
 
-            console.log('总源地址数量：', _this.urlAll.length);
-            console.log('剩余源地址数量：', _this.urlNow.length);
-            console.log('已进行：', _this.count);
-
-
-            _this.getUrl();
-        }).catch((error) => {
-            this.log.error(error);
-            console.warn(error);
-            _this.getUrl();
-        });
+        console.log('总源地址数量：', this.urlAll.length);
+        console.log('剩余源地址数量：', this.urlNow.length);
+        console.log('已进行：', this.count);
 
 
+
+         // _this.getUrl();
+
+         return [];
     }
 
 
@@ -363,12 +369,12 @@ export class robot implements Irobot {
             let req = await httpGet(url, data, task);
 
 
-            if(task.iSGzip==true){
+            if (task['iSGzip'] == true && task['iSgb2312']!=true) {
                 req = await Tool.unzlip(req);
-                req= iconv.decode(req, 'utf-8');
+                req = iconv.decode(req, 'utf-8');
             }
 
-            if (task.iSgb2312 == true) {
+            if (task['iSgb2312'] == true) {
                 req = iconv.decode(req, 'gb2312');
             }
 
@@ -384,6 +390,7 @@ export class robot implements Irobot {
         } catch (error) {
 
             console.log(error);
+            console.log('请求错误');
             returnURL = [0];
             returnImgURL = [1];
 

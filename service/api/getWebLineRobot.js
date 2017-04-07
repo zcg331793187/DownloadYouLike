@@ -11,7 +11,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 const req_1 = require('./req');
-const role_1 = require('../configs/role');
 const weiboRole_1 = require('../configs/weiboRole');
 const cheerio = require('cheerio');
 const Tool = require('../utils/Tool');
@@ -24,7 +23,7 @@ class robot {
     constructor() {
         this.urlAll = [];
         this.urlNow = [];
-        this.index = 19;
+        this.index = 0;
         this.count = 0;
         this.loop = 0;
         this.db = new mysql_1.default();
@@ -47,27 +46,27 @@ class robot {
         // this.db.addImgData(123,'http://www.xiumm.cc/data/0166/82/14869855847266.jpg');
     }
     init() {
-        return __awaiter(this, void 0, void 0, function* () {
-            // let ddd =   this.test();
-            //
-            this.getUrl();
-            // this.getWeiboFollowInit(0);
-            // this.getWeiboImgInit(0, 0);
+        // let ddd =   this.test();
+        //
+        this.getUrlInit();
+        // await this.db.getConfigs(this.index);
+        // this.handelAuto();
+        // this.getWeiboFollowInit(0);
+        // this.getWeiboImgInit(0, 0);
+    }
+    getUrlInit() {
+        this.getUrl().then(res => {
+            this.getUrlInit();
         });
     }
     handelAuto() {
-        let task = role_1.configs[this.index];
-        if (!task) {
-            this.index = 0;
-            return this.handelAuto();
-        }
-        if (task['autoLoop'] == true) {
-            this.index++;
-            console.log(task.url);
-            return task;
-        }
-        this.index++;
-        return this.handelAuto();
+        return __awaiter(this, void 0, void 0, function* () {
+            let configs = yield this.db.getConfigs(this.index);
+            if (!configs) {
+                this.index = 0;
+            }
+            return configs;
+        });
     }
     getWeiboFollowInit(page) {
         this.getWeiboFollowList(page).then(res => {
@@ -200,39 +199,36 @@ class robot {
         });
     }
     getUrl() {
-        let _this = this;
-        if (_this.urlNow.length == 0) {
-            _this.urlAll = [];
-            _this.urlNow = [];
-            _this.count = 0;
-            _this.task = _this.handelAuto();
-            _this.url = _this.task.url;
-            _this.loop++;
-        }
-        else {
-            Tool.sortType(_this.urlNow, _this.task.sortType);
-            _this.url = _this.urlNow.shift();
-        }
-        console.log('进行地址：', _this.url);
-        _this.loopGetUrl(_this.url, {}, _this.task).then((res) => {
-            console.log('本次获取新地址数:', res.length);
-            // console.log(res);
-            if (res[1]) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (this.urlNow.length == 0) {
+                this.urlAll = [];
+                this.urlNow = [];
+                this.count = 0;
+                this.task = yield this.handelAuto();
+                if (!this.task) {
+                    this.task = yield this.handelAuto();
+                }
+                this.url = this.task.url;
+                this.index++;
+                this.loop++;
+            }
+            else {
+                Tool.sortType(this.urlNow, this.task.sortType);
+                this.url = this.urlNow.shift();
+            }
+            console.log('进行地址：', this.url);
+            let data = yield this.loopGetUrl(this.url, {}, this.task);
+            if (data[1]) {
                 // console.log(res[1]);
-                if (res[1].title && res[1].list.length > 0) {
-                    _this.db.checkImgDataAndInsert(res[1].list, res[1].title).then((res) => {
-                        // console.log(res);
-                    });
+                if (data[1].title && data[1].list.length > 0) {
+                    yield this.db.checkImgDataAndInsert(data[1].list, data[1].title);
                 }
             }
-            console.log('总源地址数量：', _this.urlAll.length);
-            console.log('剩余源地址数量：', _this.urlNow.length);
-            console.log('已进行：', _this.count);
-            _this.getUrl();
-        }).catch((error) => {
-            this.log.error(error);
-            console.warn(error);
-            _this.getUrl();
+            console.log('总源地址数量：', this.urlAll.length);
+            console.log('剩余源地址数量：', this.urlNow.length);
+            console.log('已进行：', this.count);
+            // _this.getUrl();
+            return [];
         });
     }
     loopGetUrl(url, data, task) {
@@ -241,11 +237,11 @@ class robot {
             let returnImgURL;
             try {
                 let req = yield req_1.httpGet(url, data, task);
-                if (task.iSGzip == true) {
+                if (task['iSGzip'] == true && task['iSgb2312'] != true) {
                     req = yield Tool.unzlip(req);
                     req = iconv.decode(req, 'utf-8');
                 }
-                if (task.iSgb2312 == true) {
+                if (task['iSgb2312'] == true) {
                     req = iconv.decode(req, 'gb2312');
                 }
                 this.count++;
@@ -255,6 +251,7 @@ class robot {
             }
             catch (error) {
                 console.log(error);
+                console.log('请求错误');
                 returnURL = [0];
                 returnImgURL = [1];
             }

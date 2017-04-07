@@ -50,15 +50,21 @@ export function checkUrl(url:string,config:IConfigs,urlAll:string[]):boolean{
 }
 
 
+
+
+
+
+
 export function spliceUrl(host:string,uri:string):string{
     let href =null;
 
 
-    // console.log(host);
-    // console.log(uri);
+
+
+
     try{
          href = url.resolve(host, uri);
-
+        // console.log(href);
 
     }catch (e){
         console.warn(e);
@@ -72,6 +78,8 @@ export function spliceUrl(host:string,uri:string):string{
     return href;
 }
 
+
+
 export function getAllHref($:any,_thisUrl:string,configs:IConfigs,urlAll:string[],urlNow:string[]):string[]{
 
     let array:string[] = [];
@@ -80,10 +88,13 @@ export function getAllHref($:any,_thisUrl:string,configs:IConfigs,urlAll:string[
 
 
         if(ele.attribs.href){
+
       let path:string =   this.spliceUrl(_thisUrl,ele.attribs.href);
+
       let isOk:boolean  =  this.checkUrl(path,configs,urlAll);
 
       if(isOk){
+
           urlAll.push(path);
           urlNow.push(path);
           array.push(path);
@@ -92,6 +103,7 @@ export function getAllHref($:any,_thisUrl:string,configs:IConfigs,urlAll:string[
 
 
     });
+
 
 
 
@@ -353,3 +365,14 @@ const zlipPromise = (data) => {
         });
     });
 };
+
+export function checkHttpUrl(urlString){
+    if(urlString!=""){
+        let reg=/(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&:/~\+#]*[\w\-\@?^=%&/~\+#])?/;
+        if(!reg.test(urlString)){
+            return false;
+        }else{
+            return true;
+        }
+    }
+}

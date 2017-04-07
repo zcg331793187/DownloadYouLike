@@ -2,6 +2,6 @@
  * Created by zhoucaiguang on 2017/3/8.
  */
 "use strict";
-const getWebLineRobot_1 = require('./api/getWebLineRobot');
+const getWebLineRobot_1 = require('./service/api/getWebLineRobot');
 let newRobot = new getWebLineRobot_1.robot();
 newRobot.init();

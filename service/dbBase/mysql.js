@@ -96,6 +96,22 @@ class mysql {
             return yield SequelizeDb_1.WeiboDb.find({ 'attributes': ['id', 'containerId', 'niceName'], 'limit': 1, offset: offset });
         });
     }
+    getConfigs(offset) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let newConfig = false;
+            let config = yield SequelizeDb_1.ConfigDb.findOne({
+                'attributes': ['webName', 'config'], 'limit': 1,
+                offset: offset,
+                'where': {
+                    'isUse': 1
+                }
+            });
+            if (config) {
+                newConfig = JSON.parse(config.config);
+            }
+            return newConfig;
+        });
+    }
     insertWeiBoFollow(data) {
         return __awaiter(this, void 0, void 0, function* () {
             for (let i in data) {

@@ -3,14 +3,13 @@
  */
 
 
-import  {TitleDb, ImgDb, WeiboDb} from '../dbBase/SequelizeDb';
+import  {TitleDb, ImgDb, WeiboDb, ConfigDb} from '../dbBase/SequelizeDb';
 // import * as Promise from 'bluebird';
 import * as log4 from 'log4js';
+import {configs} from "../configs/role";
+import {checkHttpUrl} from '../utils/Tool'
 
 let util = require('util');
-
-
-// console.log(mysqlBase);
 
 
 interface IimgData {
@@ -160,6 +159,34 @@ export default  class mysql implements Imysql {
 
     }
 
+
+    async  getConfigs(offset: number) {
+
+        let newConfig = false;
+        let config: any = await  ConfigDb.findOne({
+            'attributes': ['webName', 'config'], 'limit': 1,
+            offset: offset,
+            'where': {
+                'isUse': 1
+            }
+        });
+
+
+        if(config){
+
+            newConfig = JSON.parse(config.config);
+
+        }
+
+
+
+
+
+
+
+
+        return newConfig;
+    }
 
     async insertWeiBoFollow(data: IinsertWeiBoFollowData[]) {
 

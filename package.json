@@ -1,8 +1,8 @@
 {
   "name": "pachong",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "request",
-  "main": "start.js",
+  "main": "app.js",
   "dependencies": {
     "archiver-zip": "^0.1.0",
     "cheerio": "^0.20.0",
@@ -29,7 +29,7 @@
     "jszip": "^2.6.1"
   },
   "scripts": {
-    "start": "node ./service/start.js"
+    "start": "node app.js"
   },
   "repository": {
     "type": "git",
