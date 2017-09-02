@@ -2,9 +2,27 @@
   "compilerOptions": {
     "module": "commonjs",
     "target": "es6",
-    "sourceMap": false
+    "noImplicitAny": true,
+    "sourceMap": true,
+    "outDir": "./build",
+    "rootDir": "./lib",
+    "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
   },
+  "compileOnSave": false,
+  "filesGlob": [
+    "./lib/**/*.ts",
+    "./lib/**/*.js"
+  ],
   "exclude": [
     "node_modules"
-  ]
+  ],
+  "atom": {
+    "rewriteTsconfig": true
+  },
+  "include": [
+    "./lib/**/*"
+  ],
+  "watch": "./lib/**/*"
 }
