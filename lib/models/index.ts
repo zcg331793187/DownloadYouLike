@@ -6,6 +6,7 @@ export const sequelize = new Sequelize(config.database, config.username, config.
     host: config.host,
     dialect: config.dialect,
     pool: config.pool,
+    logging:false
 });
 
 let fs = require('fs');
@@ -14,11 +15,19 @@ let basename = path.basename(module.filename);
 
 
 import * as workers from './workers';
-
+import * as images from './images';
+import * as titles from './titles';
+import * as pageAllUrls from './pageAllUrls';
+import * as pageNowUrls from './pageNowUrls';
+import {fail} from "assert";
 
 
 interface DbConnection {
     workers: Sequelize.Model<workers.WorkersInstance, workers.WorkersAttributes>;
+    images: Sequelize.Model<images.ImagesInstance, images.ImagesAttributes>;
+    titles: Sequelize.Model<titles.TitlesInstance, titles.TitlesAttributes>;
+    pageAllUrls: Sequelize.Model<pageAllUrls.PageAllUrlsInstance, pageAllUrls.PageAllUrlsAttributes>;
+    pageNowUrls: Sequelize.Model<pageNowUrls.PageNowUrlsInstance, pageNowUrls.PageNowUrlsAttributes>;
 }
 
 export let db: |any = {};

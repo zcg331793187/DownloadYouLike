@@ -1,23 +1,17 @@
 'use strict';
 module.exports = {
     up: function (queryInterface, Sequelize) {
-        return queryInterface.createTable('titles', {
+        return queryInterface.createTable('pageNowUrls', {
             id: {
                 allowNull: false,
                 autoIncrement: true,
                 primaryKey: true,
                 type: Sequelize.INTEGER
             },
-            title: {
-                type: Sequelize.STRING
-            },
-            image: {
+            url: {
+                unique:true,
                 type: Sequelize.STRING,
-                allowNull: true
-            },
-            total: {
-                type: Sequelize.INTEGER,
-                allowNull: true,
+                allowNull: false
             },
             createdAt: {
                 allowNull: false,
@@ -25,10 +19,6 @@ module.exports = {
             },
             updatedAt: {
                 allowNull: false,
-                type: Sequelize.DATE
-            },
-            deletedAt: {
-                allowNull: true,
                 type: Sequelize.DATE
             }
 
@@ -43,7 +33,7 @@ module.exports = {
     },
 
     down: function (queryInterface, Sequelize) {
-        return queryInterface.dropTable('titles');
+        return queryInterface.dropTable('pageNowUrls');
       /*
        Add reverting commands here.
        Return a promise to correctly handle asynchronicity.

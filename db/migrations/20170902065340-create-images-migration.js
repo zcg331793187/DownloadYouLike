@@ -1,7 +1,7 @@
 'use strict';
 module.exports = {
     up: function (queryInterface, Sequelize) {
-        return queryInterface.createTable('imges', {
+        return queryInterface.createTable('images', {
             id: {
                 allowNull: false,
                 autoIncrement: true,
@@ -9,7 +9,8 @@ module.exports = {
                 type: Sequelize.INTEGER
             },
             url: {
-                type: Sequelize.STRING
+                type: Sequelize.STRING,
+                allowNull: false
             },
             titleId: {
                 type: Sequelize.INTEGER,
@@ -22,26 +23,30 @@ module.exports = {
             updatedAt: {
                 allowNull: false,
                 type: Sequelize.DATE
+            },
+            deletedAt: {
+                allowNull: true,
+                type: Sequelize.DATE
             }
 
         });
-      /*
-       Add altering commands here.
-       Return a promise to correctly handle asynchronicity.
+        /*
+         Add altering commands here.
+         Return a promise to correctly handle asynchronicity.
 
-       Example:
-       return queryInterface.createTable('users', { id: Sequelize.INTEGER });
-       */
+         Example:
+         return queryInterface.createTable('users', { id: Sequelize.INTEGER });
+         */
     },
 
     down: function (queryInterface, Sequelize) {
-        return queryInterface.dropTable('imges');
-      /*
-       Add reverting commands here.
-       Return a promise to correctly handle asynchronicity.
+        return queryInterface.dropTable('images');
+        /*
+         Add reverting commands here.
+         Return a promise to correctly handle asynchronicity.
 
-       Example:
-       return queryInterface.dropTable('users');
-       */
+         Example:
+         return queryInterface.dropTable('users');
+         */
     }
 };
